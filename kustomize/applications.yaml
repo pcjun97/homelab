@@ -22,7 +22,6 @@ metadata:
 spec:
   destination:
     name: in-cluster
-    namespace: default
   project: default
   source:
     path: kustomize/httpbin
