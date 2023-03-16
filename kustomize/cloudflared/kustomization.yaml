@@ -1,0 +1,18 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: cloudflared
+
+resources:
+  - deployment.yaml
+  - configmap.yaml
+  - namespace.yaml
+
+secretGenerator:
+  - name: tunnel-credentials
+    type: Opaque
+    files:
+      - credentials.json
+
+generatorOptions:
+  disableNameSuffixHash: true

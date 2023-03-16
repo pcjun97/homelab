@@ -1,0 +1,20 @@
+controller:
+  hostname: ingress-nginx
+  service:
+    type: ClusterIP
+  extraContainers:
+    - name: tailscale
+      image: "ghcr.io/tailscale/tailscale:latest"
+      env:
+        - name: TS_KUBE_SECRET
+          value: tailscale
+        - name: TS_USERSPACE
+          value: "false"
+        - name: TS_AUTHKEY
+          value: "tskey-auth-kwDgtG4CNTRL-ThwgkJZvKMKo4vGbghnpHKoY6es61xFbf"
+        - name: TS_ACCEPT_DNS
+          value: "true"
+      securityContext:
+        capabilities:
+          add:
+            - NET_ADMIN

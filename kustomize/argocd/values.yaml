@@ -1,0 +1,12 @@
+fullnameOverride: argocd
+dex:
+  enabled: false
+notifications:
+  enabled: false
+applicationSet:
+  enabled: false
+configs:
+  params:
+    server.insecure: true
+  cm:
+    kustomize.buildOptions: --enable-helm

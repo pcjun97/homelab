@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: httpbin
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: "httpbin.k8s.chijun.website"
+      http:
+        paths:
+          - pathType: Prefix
+            path: "/"
+            backend:
+              service:
+                name: httpbin
+                port:
+                  number: 80
+  tls:
+    - hosts:
+        - "*.k8s.chijun.website"
+      secretName: wildcard-k8s-chijun-website
