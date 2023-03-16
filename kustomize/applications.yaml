@@ -9,7 +9,7 @@ spec:
     server: in-cluster
   project: default
   source:
-    path: .
+    path: kustomize
     repoURL: git@github.com:pcjun97/homelab.git
     targetRevision: main
 ---
@@ -24,6 +24,6 @@ spec:
     server: in-cluster
   project: default
   source:
-    path: httpbin
+    path: kustomize/httpbin
     repoURL: git@github.com:pcjun97/homelab.git
     targetRevision: main
