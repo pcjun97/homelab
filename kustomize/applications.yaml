@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: homelab
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  destination:
+    server: in-cluster
+  project: default
+  source:
+    path: .
+    repoURL: git@github.com:pcjun97/homelab.git
+    targetRevision: main
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: httpbin
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  destination:
+    server: in-cluster
+  project: default
+  source:
+    path: httpbin
+    repoURL: git@github.com:pcjun97/homelab.git
+    targetRevision: main
