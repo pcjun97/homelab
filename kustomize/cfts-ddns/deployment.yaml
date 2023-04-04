@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cfts-ddns
+  labels:
+    app.kubernetes.io/name: cfts-ddns
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: cfts-ddns
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: cfts-ddns
+    spec:
+      containers:
+        - name: cfts-ddns
+          image: "pcjun97/cfts-ddns"
+          imagePullPolicy: Always
+          args:
+            - "/app/config/config.yaml"
+          volumeMounts:
+            - name: config
+              mountPath: /app/config
+              readOnly: true
+      volumes:
+        - name: config
+          secret:
+            secretName: cfts-ddns
