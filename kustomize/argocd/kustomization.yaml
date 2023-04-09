@@ -6,6 +6,7 @@ namespace: argocd
 resources:
   - namespace.yaml
   - ingress.yaml
+  - secrets.yaml
 
 generators:
   - helm.yaml
