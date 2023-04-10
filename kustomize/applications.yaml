@@ -72,3 +72,18 @@ spec:
     path: kustomize/argocd-bot
     repoURL: git@github.com:pcjun97/homelab.git
     targetRevision: HEAD
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cert-manager
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  destination:
+    name: in-cluster
+  project: default
+  source:
+    path: kustomize/cert-manager
+    repoURL: git@github.com:pcjun97/homelab.git
+    targetRevision: HEAD
