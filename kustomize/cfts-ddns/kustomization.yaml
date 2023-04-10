@@ -5,4 +5,3 @@ namespace: ingress
 
 resources:
   - deployment.yaml
-  - secret.yaml
