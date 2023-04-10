@@ -6,9 +6,15 @@ notifications:
 applicationSet:
   enabled: false
 repoServer:
+  env:
+    - name: SOPS_AGE_KEY_FILE
+      value: /ksops-age/keys.txt
   volumes:
     - name: custom-tools
       emptyDir: {}
+    - name: ksops-age
+      secret:
+        secretName: ksops-age
   volumeMounts:
     - mountPath: /usr/local/bin/kustomize
       name: custom-tools
@@ -16,6 +22,9 @@ repoServer:
     - mountPath: /usr/local/bin/ksops
       name: custom-tools
       subPath: ksops
+    - mountPath: /ksops-age
+      name: ksops-age
+      readOnly: true
   initContainers:
     - name: install-ksops
       image: viaductoss/ksops:v4.1.1
