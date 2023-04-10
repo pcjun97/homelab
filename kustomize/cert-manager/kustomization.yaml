@@ -3,8 +3,8 @@ kind: Kustomization
 
 resources:
   - namespace.yaml
-  - secrets.yaml
   - clusterissuer.yaml
 
 generators:
   - helm.yaml
+  - ksops.yaml
