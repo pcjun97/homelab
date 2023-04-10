@@ -151,7 +151,7 @@ spec:
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: longhorn
+  name: nvidia
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
@@ -159,6 +159,6 @@ spec:
     name: in-cluster
   project: default
   source:
-    path: kustomize/longhorn
+    path: kustomize/nvidia
     repoURL: git@github.com:pcjun97/homelab.git
     targetRevision: HEAD
