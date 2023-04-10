@@ -6,14 +6,17 @@ controller:
     - name: tailscale
       image: "ghcr.io/tailscale/tailscale:latest"
       env:
-        - name: TS_KUBE_SECRET
-          value: tailscale
         - name: TS_USERSPACE
           value: "false"
         - name: TS_AUTHKEY
-          value: "tskey-auth-kwDgtG4CNTRL-ThwgkJZvKMKo4vGbghnpHKoY6es61xFbf"
+          valueFrom:
+            secretKeyRef:
+              name: ingress-nginx-tailscale
+              key: authKey
         - name: TS_ACCEPT_DNS
           value: "true"
+        - name: TS_TAILSCALED_EXTRA_ARGS
+          value: "--state=mem"
       securityContext:
         capabilities:
           add:
