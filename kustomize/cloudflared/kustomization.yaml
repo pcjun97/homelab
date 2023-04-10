@@ -8,11 +8,5 @@ resources:
   - configmap.yaml
   - namespace.yaml
 
-secretGenerator:
-  - name: tunnel-credentials
-    type: Opaque
-    files:
-      - credentials.json
-
-generatorOptions:
-  disableNameSuffixHash: true
+generators:
+  - ksops.yaml

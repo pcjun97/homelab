@@ -1,0 +1,16 @@
+apiVersion: viaduct.ai/v1
+kind: ksops
+metadata:
+  name: ksops
+  annotations:
+    config.kubernetes.io/function: |
+      exec:
+        path: ksops
+secretFrom:
+  - metadata:
+      name: tunnel-credentials
+      annotations:
+        kustomize.config.k8s.io/needs-hash: "false"
+    type: Opaque
+    files:
+      - credentials.json=credentials.enc.json
