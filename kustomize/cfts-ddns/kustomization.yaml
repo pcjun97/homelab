@@ -5,3 +5,6 @@ namespace: ingress
 
 resources:
   - deployment.yaml
+
+generators:
+  - ksops.yaml
