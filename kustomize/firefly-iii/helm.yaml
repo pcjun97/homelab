@@ -14,7 +14,7 @@ valuesInline:
       DB_CONNECTION: sqlite
       TZ: "Asia/Kuala_Lumpur"
   ingress:
-    enable: true
+    enabled: true
     className: nginx
     annotations:
       cert-manager.io/cluster-issuer: letsencrypt
