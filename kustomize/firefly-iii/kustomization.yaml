@@ -15,6 +15,9 @@ patches:
       kind: Deployment
       name: firefly-iii
     patch: |-
+      - op: replace
+        path: /kind
+        value: StatefulSet
       - op: add
         path: /spec/template/spec/containers/0/volumeMounts/-
         value: 
