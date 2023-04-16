@@ -162,3 +162,18 @@ spec:
     path: kustomize/nvidia
     repoURL: git@github.com:pcjun97/homelab.git
     targetRevision: HEAD
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: firefly-iii
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  destination:
+    name: in-cluster
+  project: default
+  source:
+    path: kustomize/firefly-iii
+    repoURL: git@github.com:pcjun97/homelab.git
+    targetRevision: HEAD
