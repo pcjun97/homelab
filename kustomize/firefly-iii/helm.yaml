@@ -4,7 +4,7 @@ metadata:
   name: firefly-iii
 name: firefly-iii
 repo: https://firefly-iii.github.io/kubernetes
-version: v1.11.0
+version: 1.4.0
 releaseName: firefly-iii
 namespace: default
 valuesInline:
