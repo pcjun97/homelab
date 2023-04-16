@@ -11,8 +11,11 @@ valuesInline:
   config:
     existingSecret: "firefly-iii"
     env:
-      DB_CONNECTION: sqlite
       TZ: "Asia/Kuala_Lumpur"
+      DB_CONNECTION: sqlite
+      DB_DATABASE: ""
+      DB_PORT: ""
+      DB_USERNAME: ""
   ingress:
     enabled: true
     className: nginx

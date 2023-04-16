@@ -3,6 +3,26 @@ kind: Kustomization
 
 namespace: default
 
+resources:
+  - pvc.yaml
+
 generators:
   - helm.yaml
   - ksops.yaml
+
+patches:
+  - target:
+      kind: Deployment
+      name: firefly-iii
+    patch: |-
+      - op: add
+        path: /spec/template/spec/containers/0/volumeMounts/-
+        value: 
+          mountPath: /var/www/html/storage/database
+          name: database
+      - op: add
+        path: /spec/template/spec/volumes/-
+        value: 
+          name: database
+          persistentVolumeClaim:
+            claimName: firefly-iii-database
