@@ -1,0 +1,26 @@
+apiVersion: builtin
+kind: HelmChartInflationGenerator
+metadata:
+  name: firefly-iii
+name: firefly-iii
+repo: https://firefly-iii.github.io/kubernetes
+version: v1.11.0
+releaseName: firefly-iii
+namespace: default
+valuesInline:
+  config:
+    existingSecret: "firefly-iii"
+    env:
+      DB_CONNECTION: sqlite
+      TZ: "Asia/Kuala_Lumpur"
+  ingress:
+    enable: true
+    className: nginx
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt
+    hosts:
+      - money.chijun.website
+    tls:
+      - secretName: wildcard-chijun-website
+        hosts:
+          - "*.chijun.website"
