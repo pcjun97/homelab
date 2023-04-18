@@ -30,4 +30,4 @@ patches:
         value: httpbin-2
       - op: replace
         path: /spec/rules/0/host
-        value: "httpbin-2.chijun.website""
+        value: "httpbin-2.chijun.website"
