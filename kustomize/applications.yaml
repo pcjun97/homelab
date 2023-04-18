@@ -16,7 +16,7 @@ spec:
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: httpbin
+  name: httpbin-1
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
@@ -24,7 +24,22 @@ spec:
     name: in-cluster
   project: default
   source:
-    path: kustomize/httpbin
+    path: kustomize/httpbin/overlay1
+    repoURL: git@github.com:pcjun97/homelab.git
+    targetRevision: HEAD
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: httpbin-2
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  destination:
+    name: in-cluster
+  project: default
+  source:
+    path: kustomize/httpbin/nested/overlay2
     repoURL: git@github.com:pcjun97/homelab.git
     targetRevision: HEAD
 ---
