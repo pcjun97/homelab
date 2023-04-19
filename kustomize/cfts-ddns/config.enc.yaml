@@ -1,0 +1,29 @@
+cloudflareAPIToken: ENC[AES256_GCM,data:QFkRqAQfmoQyBfq4Zuur55N9WfOqFdgyoOx8w8zFQ7HASXYV7SQagA==,iv:IGNrCty7hZgw88yiKeqeilpESXSK4NeItlKAR4Vrc8g=,tag:BpQRHGP4iIQPsEXX7xUIkQ==,type:str]
+tailscaleAuthKey: ENC[AES256_GCM,data:SBcRFs3rtt6MyD75utVfI5GPlSVD6t1nAacD3DQDhjPmcrz6HHkwM/2RsaQCDTaQMoOR4Ph4HlWy,iv:Q8eU2DWIXa2tAvOpDqc5dLnWGfpKwGW3+LvJfUuxypY=,tag:6JePc2aTHaBpbqfkxLMdGQ==,type:str]
+refreshInterval: ENC[AES256_GCM,data:OAF02g==,iv:iFyvVfi+dsVK/m9aE60WZ6sWvABQtidYb5/s5pWTo6g=,tag:XsuF0kpMKRhe9kHm9A34vw==,type:int]
+mappings:
+    - hostname: ENC[AES256_GCM,data:Sbx1PQq0yW0m5pl9pQ==,iv:jatVYlcc7p2ejoBlewspkPVKyzdwDDshq6BSgas1Src=,tag:9r0PRlLy0IFP9yHXvivURw==,type:str]
+      records:
+        - zone: ENC[AES256_GCM,data:odn6dTDt90eYoGwfVTM=,iv:hf0sXZ7OpPWXqL4SPZShro0I5WUk0l10ZQYyaid8VtQ=,tag:Pyz4KXk2Yq6dHLrvDqKJ7g==,type:str]
+          names:
+            - ENC[AES256_GCM,data:S/U4dPfGzjnvq1YiMbg=,iv:0SHA06qQei8pnL2mMRT+WhcI8JFVLHPKYBWiuqJDayY=,tag:Y27cGTMfSL9xSuAsdETXog==,type:str]
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1da7vm5p0m8xytkxswg5y9gk07n9fcs8cct0m5a2qthk7zh8dvfvspwwe0l
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSArZWpLbHlwVi9EeEd3VEFE
+            UGtCcSt1TkhpSklhQVkreVZ3SG9pM3YrbkZZCjFVelBlaUZDbnAzM0YzcGZVdjVT
+            c1RBaW9SUWJZMVRrelloZUk4Z3FseW8KLS0tIHd4NG1pemlSN0lqajlyNFBhSG5D
+            VUprcVoyMTlEejNNaXNtOHIrTXc5cW8Ks7QEry1SolFy0qEtoZtAuXJO8cfg7qaD
+            TBdhFV/mxwjzLSGBp7XcaI1UPwVueVr1KpVAv/GUB++UL8cv7ADIcg==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2023-04-19T08:56:13Z"
+    mac: ENC[AES256_GCM,data:mZGXcvNavDf2x9MvaqggWvlnAH86oBtSVeDlthye5+fAIIIRBfwdGRzMh+ovZC7a/BCogrScIqEBgC7EDrmc4WRm1GzrEjuh/rlQQFvj+l5M2QVOvtBrOirnr8x9VUckgJUsc8yeajFditxMfI1C3PdrVXH0dZe5GAptYGiuWdc=,iv:OH2xqfO8zjLaY2FXCGT7iVcGehF1bgDK1udsSTnIwNc=,tag:/ONwE1t6F52NfAVJV/a/tg==,type:str]
+    pgp: []
+    unencrypted_suffix: _unencrypted
+    version: 3.7.3
