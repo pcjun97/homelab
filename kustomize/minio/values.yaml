@@ -1,4 +1,13 @@
 existingSecret: minio
+ingress:
+  enabled: true
+  hosts:
+    - minio.chijun.website
+  tls:
+    - secretName: wilcard-chijun-website
+      hosts:
+        - "*.chijun.website"
+
 persistence:
   size: 100Gi
 replicas: 2
