@@ -1,0 +1,4 @@
+existingSecret: minio
+persistence:
+  size: 100Gi
+replicas: 2

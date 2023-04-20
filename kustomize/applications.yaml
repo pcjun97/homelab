@@ -207,3 +207,22 @@ spec:
     path: kustomize/actual-budget
     repoURL: git@github.com:pcjun97/homelab.git
     targetRevision: HEAD
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: minio
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  destination:
+    name: in-cluster
+    namespace: minio
+  project: default
+  source:
+    path: kustomize/minio
+    repoURL: git@github.com:pcjun97/homelab.git
+    targetRevision: HEAD
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
