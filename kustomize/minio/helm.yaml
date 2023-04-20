@@ -6,5 +6,6 @@ name: minio
 repo: https://charts.min.io/
 version: 5.0.8
 releaseName: minio
+namespace: minio
 includeCRDs: true
 valuesFile: values.yaml
