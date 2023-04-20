@@ -2,3 +2,6 @@ existingSecret: minio
 persistence:
   size: 100Gi
 replicas: 2
+resources:
+  requests:
+    memory: 512Mi
