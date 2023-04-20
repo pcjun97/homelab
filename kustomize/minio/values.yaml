@@ -1,6 +1,7 @@
 existingSecret: minio
 ingress:
   enabled: true
+  ingressClassName: nginx
   hosts:
     - minio.chijun.website
   tls:
