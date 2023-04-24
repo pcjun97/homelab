@@ -1,0 +1,25 @@
+loki:
+  commonConfig:
+    replication_factor: 1
+  singleBinary:
+    replicas: 1
+    extraArgs:
+      - "-config.expand-env"
+    extraEnv:
+      - name: S3_SECRET_ACCESS_KEY
+        valueFrom:
+          secretKeyRef:
+            name: loki
+            key: minioSecretKey
+  storage:
+    type: "s3"
+    s3:
+      endpoint: "http://minio:minio"
+      accessKeyId: "loki"
+      secretAccessKey: "${S3_SECRET_ACCESS_KEY}"
+      s3ForcePathStyle: true
+      insecure: true
+    bucketNames:
+      chunks: "loki-chunks"
+      ruler: "loki-ruler"
+      admin: "loki-admin"
