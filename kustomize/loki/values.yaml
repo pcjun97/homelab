@@ -23,3 +23,14 @@ singleBinary:
         secretKeyRef:
           name: loki
           key: minioSecretKey
+monitoring:
+  dashboards:
+    enabled: false
+  rules:
+    enabled: false
+  serviceMonitor:
+    enabled: false
+  selfMonitoring:
+    enabled: false
+  lokiCanary:
+    enabled: false
