@@ -241,7 +241,7 @@ spec:
   source:
     path: kustomize/loki
     repoURL: git@github.com:pcjun97/homelab.git
-    targetRevision: HEAD
+    targetRevision: feat/loki/init
   syncPolicy:
     syncOptions:
       - CreateNamespace=true
