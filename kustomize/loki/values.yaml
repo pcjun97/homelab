@@ -23,6 +23,8 @@ singleBinary:
         secretKeyRef:
           name: loki
           key: minioSecretKey
+  persistence:
+    enabled: false
 monitoring:
   dashboards:
     enabled: false
