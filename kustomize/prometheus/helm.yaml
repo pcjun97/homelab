@@ -1,0 +1,10 @@
+apiVersion: builtin
+kind: HelmChartInflationGenerator
+metadata:
+  name: prometheus
+name: prometheus
+repo: https://prometheus-community.github.io/helm-charts
+version: 21.0.0
+releaseName: prometheus
+namespace: monitoring
+valuesFile: values.yaml

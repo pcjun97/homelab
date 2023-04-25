@@ -1,0 +1,6 @@
+kube-state-metrics:
+  enabled: false
+alertmanager:
+  enabled: false
+prometheus-pushgateway:
+  enabled: false
