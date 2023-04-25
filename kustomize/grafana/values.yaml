@@ -1,5 +1,5 @@
-env:
-  GF_PATHS_DATA: /data
+persistence:
+  enabled: true
 testFramework:
   enabled: false
 ingress:
