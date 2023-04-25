@@ -16,6 +16,8 @@ loki:
       admin: "loki-admin"
 singleBinary:
   replicas: 1
+  persistence:
+    enableStatefulSetAutoDeletePVC: false
   extraArgs:
     - "-config.expand-env"
   extraEnv:
