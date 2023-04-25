@@ -4,7 +4,7 @@ loki:
   storage:
     type: "s3"
     s3:
-      endpoint: "http://minio:minio"
+      endpoint: "http://minio.minio:9000"
       accessKeyId: "loki"
       secretAccessKey: "${S3_SECRET_ACCESS_KEY}"
       s3ForcePathStyle: true
