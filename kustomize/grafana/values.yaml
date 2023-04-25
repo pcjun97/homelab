@@ -1,0 +1,28 @@
+env:
+  GF_PATHS_DATA: /data
+testFramework:
+  enabled: false
+ingress:
+  enabled: true
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt
+  hosts:
+    - "grafana.chijun.website"
+  tls:
+    - secretName: wildcard-chijun-website
+      hosts:
+        - "*.chijun.website"
+admin:
+  existingSecret: ""
+datasources:
+  datasources.yaml:
+    apiVersion: 1
+    datasources:
+      - name: Prometheus
+        type: prometheus
+        url: http://prometheus-server
+        access: proxy
+      - name: Loki
+        type: loki
+        url: http://loki:3100
+        access: proxy
