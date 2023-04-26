@@ -14,7 +14,7 @@ spec:
             path: "/"
             backend:
               service:
-                name: httpbin
+                name: qbittorent
                 port:
                   number: 80
   tls:
