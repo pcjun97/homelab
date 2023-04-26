@@ -3,6 +3,7 @@ kind: ServiceAccount
 metadata:
   name: media-storage
 ---
+apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: media-storage
