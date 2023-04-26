@@ -28,6 +28,8 @@ spec:
                   key: tailscaleAuthKey
             - name: TS_KUBE_SECRET
               value: media-storage-tailscale-auth
+            - name: TS_EXTRA_ARGS
+              value: "--ssh"
           securityContext:
             capabilities:
               add:
