@@ -3,3 +3,4 @@ kind: Kustomization
 
 generators:
   - helm.yaml
+  - ksops.yaml
