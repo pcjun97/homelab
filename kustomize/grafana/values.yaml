@@ -13,8 +13,6 @@ ingress:
     - secretName: wildcard-chijun-website
       hosts:
         - "*.chijun.website"
-admin:
-  existingSecret: ""
 datasources:
   datasources.yaml:
     apiVersion: 1
