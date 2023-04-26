@@ -23,7 +23,12 @@ spec:
           volumeMounts:
             - mountPath: /data/media
               name: media-storage
+            - mountPath: /config
+              name: config
       volumes:
         - name: media-storage
           persistentVolumeClaim:
             claimName: media-storage
+        - name: config
+          persistentVolumeClaim:
+            claimName: qbittorent-config
