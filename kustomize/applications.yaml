@@ -287,3 +287,18 @@ spec:
   syncPolicy:
     syncOptions:
       - CreateNamespace=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: media-storage
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  destination:
+    name: in-cluster
+  project: default
+  source:
+    path: kustomize/media-storage
+    repoURL: git@github.com:pcjun97/homelab.git
+    targetRevision: HEAD
