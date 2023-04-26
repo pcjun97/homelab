@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tailscale-media-storage
+  labels:
+    app.kubernetes.io/name: media-storage
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: media-storage
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: media-storage
+    spec:
+      hostname: media-storage
+      containers:
+        - name: tailscale
+          image: "ghcr.io/tailscale/tailscale:latest"
+          env:
+            - name: TS_AUTHKEY
+              valueFrom:
+                secretKeyRef:
+                  name: media-storage
+                  key: tailscaleAuthKey
+            - name: TS_KUBE_SECRET
+              value: media-storage-tailscale-auth
+          securityContext:
+            capabilities:
+              add:
+                - NET_ADMIN
+          volumeMounts:
+            mountPath: /data/media
+            name: media-storage
+      volumes:
+        - name: media-storage
+          persistentVolumeClaim:
+            claimName: media-storage
