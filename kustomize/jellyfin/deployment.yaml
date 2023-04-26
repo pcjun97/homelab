@@ -18,6 +18,9 @@ spec:
       containers:
         - name: jellyfin
           image: "linuxserver/jellyfin:10.8.10"
+          env:
+            - name: NVIDIA_VISIBLE_DEVICES
+              value: "all"
           ports:
             - containerPort: 8096
               name: http
