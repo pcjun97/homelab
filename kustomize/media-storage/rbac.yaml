@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: media-storage
+---
+kind: Role
+metadata:
+  name: media-storage
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - "secrets"
+    verbs:
+      - "create"
+  - apiGroups:
+      - ""
+    resources:
+      - "secrets"
+    verbs:
+      - "get"
+      - "update"
+      - "patch"
+    resourceNames:
+      - "media-storage"
+      - "media-storage-tailscale-auth"
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: media-storage
+subjects:
+  - kind: ServiceAccount
+    name: media-storage
+roleRef:
+  kind: Role
+  name: media-storage
+  apiGroup: rbac.authorization.k8s.io

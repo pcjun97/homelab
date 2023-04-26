@@ -6,6 +6,7 @@ namespace: default
 resources:
   - pvc.yaml
   - deployment.yaml
+  - rbac.yaml
 
 generators:
   - ksops.yaml
