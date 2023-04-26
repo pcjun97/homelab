@@ -31,8 +31,8 @@ spec:
               add:
                 - NET_ADMIN
           volumeMounts:
-            mountPath: /data/media
-            name: media-storage
+            - mountPath: /data/media
+              name: media-storage
       volumes:
         - name: media-storage
           persistentVolumeClaim:
