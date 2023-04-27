@@ -13,6 +13,8 @@ ingress:
     - secretName: wildcard-chijun-website
       hosts:
         - "*.chijun.website"
+admin:
+  existingSecret: "grafana"
 datasources:
   datasources.yaml:
     apiVersion: 1
