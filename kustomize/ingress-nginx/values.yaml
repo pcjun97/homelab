@@ -4,7 +4,7 @@ controller:
     type: ClusterIP
   extraContainers:
     - name: tailscale
-      image: "ghcr.io/tailscale/tailscale:latest"
+      image: "ghcr.io/tailscale/tailscale:v1.40.0"
       env:
         - name: TS_USERSPACE
           value: "false"
