@@ -27,7 +27,7 @@ spec:
             - mountPath: /var/syncthing
               name: data
         - name: tailscale
-          image: "ghcr.io/tailscale/tailscale:latest"
+          image: "ghcr.io/tailscale/tailscale:v1.40.0"
           env:
             - name: TS_AUTHKEY
               valueFrom:
