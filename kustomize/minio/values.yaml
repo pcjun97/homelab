@@ -17,8 +17,8 @@ policies:
           - "s3:*"
 users:
   - accessKey: loki
-    existingSecret: loki
-    existingSecretKey: minioSecretKey
+    existingSecret: minio
+    existingSecretKey: lokiSecretKey
     policy: loki
 persistence:
   size: 100Gi
