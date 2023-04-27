@@ -332,3 +332,18 @@ spec:
     path: kustomize/jellyfin
     repoURL: git@github.com:pcjun97/homelab.git
     targetRevision: HEAD
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: syncthing
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  destination:
+    name: in-cluster
+  project: default
+  source:
+    path: kustomize/syncthing
+    repoURL: git@github.com:pcjun97/homelab.git
+    targetRevision: HEAD
