@@ -20,8 +20,9 @@ spec:
           image: debian:stable-slim
           command: ["/bin/sh", "-c"]
           args:
-            - apt update
-              apt install -y fonts-noto-cjk
+            - echo "installing fonts-noto-cjk...";
+              apt update;
+              apt install -y fonts-noto-cjk;
               echo "Done.";
           volumeMounts:
             - mountPath: /usr/share/fonts/opentype/noto
