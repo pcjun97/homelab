@@ -20,6 +20,7 @@ spec:
       containers:
         - name: tailscale
           image: "ghcr.io/tailscale/tailscale:v1.40.0"
+          imagePullPolicy: IfNotPresent
           env:
             - name: TS_AUTHKEY
               valueFrom:
