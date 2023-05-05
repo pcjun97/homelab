@@ -67,7 +67,7 @@ Self-developed apps/services:
 
 ### Public & Private services
 
-Public endpoints are served using cloudflared.
+Public endpoints are served using [Cloudflare Tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/), pointing to ingress-nginx.
 
 Private endpoints are served using Tailscale, with each ingress-nginx instance having one tailscale sidecar, giving each of them a private tailscale IP.
 One or more A records with the same domain are created that point to these IPs (with the help of cfts-ddns).
