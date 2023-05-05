@@ -65,7 +65,7 @@ Third-party apps/services:
 
 Self-developed apps/services:
 
-- cfts-ddns (monitor and update domains to point to specific tailscale instances private IPs)
+- cfts-ddns (monitor and update domains to point to specific tailscale machines private IPs)
 
 ## Tools
 
