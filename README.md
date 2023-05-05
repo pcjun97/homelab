@@ -30,33 +30,42 @@ The operating system of choice is Debian 11 (bullseye), with the following packa
 - [open-iscsi](https://staging--longhornio.netlify.app/docs/0.8.1/deploy/install/#installing-open-iscsi)
 - [nfs-common](https://longhorn.io/docs/archives/1.1.0/deploy/install/#installing-nfsv4-client)
 
+A single-node [k3s](https://docs.k3s.io/) cluster is installed,
+with the following optional addons disabled:
+
+- helm-controller
+- servicelb
+- traefik
+- local-storage
+- metrics-server
+
 ## Services
 
 Third-party apps/services:
 
-- argo-cd
-- cert-manager
-- cloudflared
-- firefly-iii
-- grafana
-- httpbin
-- ingress-nginx
-- jellyfin
-- kube-state-metrics
-- loki
-- longhorn
-- metrics-server
-- minio
-- nvidia-device-plugin
-- prometheus
-- promtail
-- qbittorrent
-- syncthing
-- tailscale
+- [argo-cd](https://argoproj.github.io/cd://argoproj.github.io/cd/)
+- [cert-manager](https://cert-manager.io://cert-manager.io/)
+- [cloudflared](https://developers.cloudflare.com/cloudflare-one/tutorials/many-cfd-one-tunnel/)
+- [firefly-iii](https://www.firefly-iii.org://www.firefly-iii.org/)
+- [grafana](https://grafana.com/)
+- [httpbin](https://httpbin.org/)
+- [ingress-nginx](https://kubernetes.github.io/ingress-nginx/)
+- [jellyfin](https://jellyfin.org/)
+- [kube-state-metrics](https://github.com/kubernetes/kube-state-metrics)
+- [loki](https://grafana.com/oss/loki/)
+- [longhorn](https://longhorn.io/)
+- [metrics-server](https://github.com/kubernetes-sigs/metrics-server)
+- [minio](https://min.io/)
+- [nvidia-device-plugin](https://github.com/NVIDIA/k8s-device-plugin)
+- [prometheus](https://prometheus.io://prometheus.io/)
+- [promtail](https://grafana.com/docs/loki/latest/clients/promtail/)
+- [qbittorrent](https://www.qbittorrent.org/)
+- [syncthing](https://syncthing.net/)
+- [tailscaled](https://tailscale.com/kb/1185/kubernetes/)
 
 Self-developed apps/services:
 
-- cfts-ddns
+- cfts-ddns (monitor and update domains to point to specific tailscale instances private IPs)
 
 ## Tools
 
