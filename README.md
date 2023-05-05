@@ -2,6 +2,15 @@
 
 This project stores configurations of services in my homelab.
 
+## TODO
+
+- Add more nodes for a high-availability setup
+- Enable longhorn's replication
+- Implement solution for backup to offsite storage
+- Include IaC (Infrastructure as Code) for server setup (OS & packages)
+- Add and improve documentations
+- Add CI/CD to lint and sync the configurations
+
 ## Hardware
 
 The homelab runs on a single machine with the following specifications:
@@ -47,7 +56,6 @@ Third-party apps/services:
 
 Self-developed apps/services:
 
-- argocd-bot
 - cfts-ddns
 
 ## Tools
@@ -55,12 +63,13 @@ Self-developed apps/services:
 - GitOps solution of choice is combination of [kustomize](https://kubectl.docs.kubernetes.io/references/kustomize/) and [argo-cd](https://argo-cd.readthedocs.io/en/stable/)
 - Secrets are encrypted using [sops](https://github.com/mozilla/sops) and [ksops](https://github.com/viaduct-ai/kustomize-sops)
 
-## TODO
+## Miscellaneous
 
-- Add more nodes for a high-availability setup
-- Enable longhorn's replication
-- Implement solution for backup to offsite storage
-- Include IaC (Infrastructure as Code) for server setup (OS & packages)
-- Add and improve documentations
-- Add CI/CD to sync the manifests
+### Public & Private services
+
+Public endpoints are served using cloudflared.
+
+Private endpoints are served using Tailscale, with each ingress-nginx instance having one tailscale sidecar, giving each of them a private tailscale IP.
+One or more A records with the same domain are created that point to these IPs (with the help of cfts-ddns).
+This allows any tailscale-connected clients to access these endpoints by resolving the domain through public DNS servers.
 
