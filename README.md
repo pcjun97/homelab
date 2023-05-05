@@ -50,6 +50,11 @@ Self-developed apps/services:
 - argocd-bot
 - cfts-ddns
 
+## Tools
+
+- GitOps solution of choice is combination of [kustomize](https://kubectl.docs.kubernetes.io/references/kustomize/) and [argo-cd](https://argo-cd.readthedocs.io/en/stable/)
+- Secrets are encrypted using [sops](https://github.com/mozilla/sops) and [ksops](https://github.com/viaduct-ai/kustomize-sops)
+
 ## TODO
 
 - Add more nodes for a high-availability setup
@@ -57,4 +62,5 @@ Self-developed apps/services:
 - Implement solution for backup to offsite storage
 - Include IaC (Infrastructure as Code) for server setup (OS & packages)
 - Add and improve documentations
+- Add CI/CD to sync the manifests
 
