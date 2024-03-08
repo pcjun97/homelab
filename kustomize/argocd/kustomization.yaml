@@ -8,14 +8,13 @@ resources:
   - ingress.yaml
 
 helmCharts:
-  - name: cert-manager
-    repo: https://charts.jetstack.io
-    version: v1.11.0
-    releaseName: cert-manager
-    namespace: cert-manager
+  - name: argo-cd
+    repo: https://argoproj.github.io/argo-helm
+    version: 5.24.3
+    releaseName: argocd
+    namespace: argocd
     includeCRDs: true
-    valuesInline:
-      installCRDs: true
+    valuesFile: values.yaml
 
 generators:
   - ksops.yaml
