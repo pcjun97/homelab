@@ -10,5 +10,5 @@ resources:
   - pvc.yaml
 
 images:
-  - name: "linuxserver/qbittorent"
+  - name: "linuxserver/qbittorrent"
     newTag: "4.5.2"
