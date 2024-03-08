@@ -6,8 +6,15 @@ namespace: default
 resources:
   - pvc.yaml
 
+helmCharts:
+  - name: firefly-iii
+    repo: https://firefly-iii.github.io/kubernetes
+    version: 1.4.0
+    releaseName: firefly-iii
+    namespace: default
+    valuesFile: values.yaml
+
 generators:
-  - helm.yaml
   - ksops.yaml
 
 patches:

@@ -8,3 +8,9 @@ resources:
   - service.yaml
   - ingress.yaml
   - pvc.yaml
+
+images:
+  - name: debian
+    newTag: stable-slim
+  - name: "linuxserver/jellyfin"
+    newTag: "10.8.10"

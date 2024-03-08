@@ -12,3 +12,9 @@ resources:
 
 generators:
   - ksops.yaml
+
+images:
+  - name: "syncthing:syncthing"
+    newTag: "1.23.4"
+  - name: "ghcr.io/tailscale/tailscale:v1.40.0"
+    newTag: "v1.40.0"
