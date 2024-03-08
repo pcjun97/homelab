@@ -31,3 +31,7 @@ patches:
       - op: replace
         path: /spec/rules/0/host
         value: "httpbin-2.chijun.website"
+
+images:
+  - name: "kennethreitz/httpbin"
+    newTag: "latest"

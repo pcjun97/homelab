@@ -6,8 +6,15 @@ namespace: longhorn-system
 resources:
   - namespace.yaml
 
-generators:
-  - helm.yaml
+helmCharts:
+  - name: longhorn
+    repo: https://charts.longhorn.io
+    version: 1.4.0
+    releaseName: longhorn
+    namespace: longhorn-system
+    includeCRDs: true
+    valuesFile: values.yaml
+      
 
 patchesStrategicMerge:
   - |-

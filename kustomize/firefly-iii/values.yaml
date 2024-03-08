@@ -1,0 +1,19 @@
+config:
+  existingSecret: "firefly-iii"
+  env:
+    TZ: "Asia/Kuala_Lumpur"
+    DB_CONNECTION: sqlite
+    DB_DATABASE: ""
+    DB_PORT: ""
+    DB_USERNAME: ""
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt
+  hosts:
+    - money.chijun.website
+  tls:
+    - secretName: wildcard-chijun-website
+      hosts:
+        - "*.chijun.website"

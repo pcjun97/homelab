@@ -17,7 +17,7 @@ spec:
       runtimeClassName: nvidia
       initContainers:
         - name: install-cjk-fonts
-          image: debian:stable-slim
+          image: debian
           command: ["/bin/sh", "-c"]
           args:
             - echo "installing fonts-noto-cjk...";
@@ -29,7 +29,7 @@ spec:
               name: noto
       containers:
         - name: jellyfin
-          image: "linuxserver/jellyfin:10.8.10"
+          image: "linuxserver/jellyfin"
           env:
             - name: NVIDIA_VISIBLE_DEVICES
               value: "all"

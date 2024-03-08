@@ -3,3 +3,7 @@ kind: Kustomization
 
 resources:
   - ../base
+
+images:
+  - name: "kennethreitz/httpbin"
+    newTag: "latest"
