@@ -16,5 +16,4 @@ helmCharts:
       installCRDs: true
 
 generators:
-  - helm.yaml
   - ksops.yaml
