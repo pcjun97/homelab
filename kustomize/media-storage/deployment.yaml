@@ -30,7 +30,7 @@ spec:
             - name: TS_KUBE_SECRET
               value: media-storage-tailscale-auth
             - name: TS_EXTRA_ARGS
-              value: --advertise-tags=tag:homelab-media-storage
+              value: "--ssh --advertise-tags=tag:homelab-media-storage"
           securityContext:
             capabilities:
               add:
