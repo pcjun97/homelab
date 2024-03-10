@@ -38,6 +38,8 @@ spec:
                   key: tailscaleAuthKey
             - name: TS_KUBE_SECRET
               value: syncthing-tailscale-auth
+            - name: TS_EXTRA_ARGS
+              value: --advertise-tags=tag:homelab-syncthing
           securityContext:
             capabilities:
               add:

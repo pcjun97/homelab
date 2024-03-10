@@ -18,6 +18,8 @@ controller:
           value: "true"
         - name: TS_TAILSCALED_EXTRA_ARGS
           value: "--state=mem"
+        - name: TS_EXTRA_ARGS
+          value: --advertise-tags=tag:homelab-ingress-nginx
       securityContext:
         capabilities:
           add:
