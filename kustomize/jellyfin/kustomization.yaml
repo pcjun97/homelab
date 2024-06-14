@@ -13,4 +13,4 @@ images:
   - name: debian
     newTag: stable-slim
   - name: "linuxserver/jellyfin"
-    newTag: "10.8.10"
+    newTag: "10.9.6"
