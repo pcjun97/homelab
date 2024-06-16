@@ -1,5 +1,5 @@
 cloudflareAPIToken: ENC[AES256_GCM,data:QFkRqAQfmoQyBfq4Zuur55N9WfOqFdgyoOx8w8zFQ7HASXYV7SQagA==,iv:IGNrCty7hZgw88yiKeqeilpESXSK4NeItlKAR4Vrc8g=,tag:BpQRHGP4iIQPsEXX7xUIkQ==,type:str]
-tailscaleAuthKey: ENC[AES256_GCM,data:lrUeE+BgJoK3MoGyLSRXCzPR0YGAyGFLJ+3iqqkaqFaDBEVE/CZwRD/vJ5m8EqCWtyur671iNqSm,iv:KXsNC2e/1qGwaRiKKgepYXznbazwC3oCbxE80dnZ3bQ=,tag:4lcCIAOXrtm3V/8ZBuuF5A==,type:str]
+tailscaleAuthKey: ENC[AES256_GCM,data:kze+ptb2xwvK81hveeH5z7ppqJYUREtny/stCdIbWo1TMMBiiRdT6StPhqiTXy5//qdTcJEOY6ZYIIVb0ko=,iv:rEy/v12ZbY6eSmquIkgbZ6NzGw7N+TT/L4ovwXLkfek=,tag:lloMaZjhdtw3Wrr5/DLlBA==,type:str]
 refreshInterval: ENC[AES256_GCM,data:OAF02g==,iv:iFyvVfi+dsVK/m9aE60WZ6sWvABQtidYb5/s5pWTo6g=,tag:XsuF0kpMKRhe9kHm9A34vw==,type:int]
 mappings:
     - hostname: ENC[AES256_GCM,data:Sbx1PQq0yW0m5pl9pQ==,iv:jatVYlcc7p2ejoBlewspkPVKyzdwDDshq6BSgas1Src=,tag:9r0PRlLy0IFP9yHXvivURw==,type:str]
@@ -22,8 +22,8 @@ sops:
             VUprcVoyMTlEejNNaXNtOHIrTXc5cW8Ks7QEry1SolFy0qEtoZtAuXJO8cfg7qaD
             TBdhFV/mxwjzLSGBp7XcaI1UPwVueVr1KpVAv/GUB++UL8cv7ADIcg==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2024-03-08T17:24:28Z"
-    mac: ENC[AES256_GCM,data:pt12ACD2oSqnuBGsR/3Vo5WhJgfrnO0OtxdczaBQADpxoBgG2KBgX5EXxPzrrlGDRG8DAwIG/f/ql6J0STv5g3whboxkXlv4UK1BBvQk039LYdGMXmvDsMkPXsSXzthklbitxM2ks0CxJ4qvilGr5LlKU1FbyamZtV1pnnSrQZU=,iv:A9vyrV9lJqLAI8/4Kao/W6NphLoZj2bjR+kcMOMFJrA=,tag:n2Ytt3DP4c5JmsxrA5oatQ==,type:str]
+    lastmodified: "2024-06-16T17:05:08Z"
+    mac: ENC[AES256_GCM,data:20uF9/c+Ine1CTim0PKb4VcI0LlLFbAzV0mHvQbMWvUnzWOmD7/UnGJ2P+CeiaGgOZj1Lm/BPEIixJo1Zc6Z3wYoWbCLifeY86S0oy4K7kKmx22hyRVXrXg9/K+P6ZWaXO8goCARoE0mErZDWuyk3htASoThBz9a1r6oat4Evxg=,iv:nLoBImqHv26bI9/NqeL7NLJ+qaxMAXyrV25slu4bi8Y=,tag:tx+RhEK+9pxLj4U0z/eUjA==,type:str]
     pgp: []
     unencrypted_suffix: _unencrypted
     version: 3.8.1
