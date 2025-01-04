@@ -4,7 +4,7 @@ kind: Kustomization
 helmCharts:
   - name: minio
     repo: https://charts.min.io/
-    version: 5.0.8
+    version: 5.4.0
     releaseName: minio
     namespace: minio
     includeCRDs: true
