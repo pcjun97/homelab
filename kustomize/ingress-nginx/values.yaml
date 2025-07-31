@@ -4,7 +4,7 @@ controller:
     type: ClusterIP
   extraContainers:
     - name: tailscale
-      image: "ghcr.io/tailscale/tailscale:v1.61.11"
+      image: "ghcr.io/tailscale/tailscale:v1.86.2"
       imagePullPolicy: IfNotPresent
       env:
         - name: TS_USERSPACE
