@@ -4,7 +4,7 @@ kind: Kustomization
 helmCharts:
   - name: kube-state-metrics
     repo: https://prometheus-community.github.io/helm-charts
-    version: 5.37.0
+    version: 6.1.4
     releaseName: kube-state-metrics
     namespace: kube-system
     includeCRDs: true
