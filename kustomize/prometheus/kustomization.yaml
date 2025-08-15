@@ -4,7 +4,7 @@ kind: Kustomization
 helmCharts:
   - name: prometheus
     repo: https://prometheus-community.github.io/helm-charts
-    version: 21.1.2
+    version: 27.30.0
     releaseName: prometheus
     namespace: monitoring
     valuesFile: values.yaml
