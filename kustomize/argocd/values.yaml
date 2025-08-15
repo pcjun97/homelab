@@ -4,7 +4,7 @@ dex:
 notifications:
   enabled: false
 applicationSet:
-  enabled: false
+  enabled: true
 repoServer:
   env:
     - name: SOPS_AGE_KEY_FILE
