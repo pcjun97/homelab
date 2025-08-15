@@ -13,4 +13,4 @@ generators:
 
 images:
   - name: "ghcr.io/tailscale/tailscale"
-    newTag: "v1.61.11"
+    newTag: "v1.86.2"
