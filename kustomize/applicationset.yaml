@@ -10,15 +10,15 @@ spec:
         repoURL: https://github.com/pcjun97/homelab
         revision: HEAD
         directories:
-          - path: kustomize
+          - path: kustomize/*
   template:
     metadata:
-      name: "{{.path.basename}}"
+      name: "{{ .path.basename }}"
     spec:
       project: default
       source:
         repoURL: https://github.com/pcjun97/homelab
         targetRevision: HEAD
-        path: "{{.path.path}}"
+        path: "{{ .path.path }}"
       destination:
         name: in-cluster
