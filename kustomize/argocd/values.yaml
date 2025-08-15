@@ -27,12 +27,12 @@ repoServer:
       readOnly: true
   initContainers:
     - name: install-ksops
-      image: viaductoss/ksops:v4.3.3
+      image: viaductoss/ksops:v4.4.0
       command: ["/bin/sh", "-c"]
       args:
         - echo "Installing KSOPS...";
           mv ksops /custom-tools/;
-          mv $GOPATH/bin/kustomize /custom-tools/;
+          mv kustomize /custom-tools/;
           echo "Done.";
       volumeMounts:
         - mountPath: /custom-tools
