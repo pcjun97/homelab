@@ -11,4 +11,4 @@ resources:
 
 images:
   - name: "linuxserver/qbittorrent"
-    newTag: "4.5.2"
+    newTag: "4.6.7"
