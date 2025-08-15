@@ -27,7 +27,7 @@ repoServer:
       readOnly: true
   initContainers:
     - name: install-ksops
-      image: viaductoss/ksops:v4.1.1
+      image: viaductoss/ksops:v4.3.3
       command: ["/bin/sh", "-c"]
       args:
         - echo "Installing KSOPS...";
