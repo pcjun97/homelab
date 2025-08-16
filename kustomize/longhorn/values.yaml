@@ -14,6 +14,14 @@ csi:
   resizerReplicaCount: 1
   snapshotterReplicaCount: 1
 
-
 longhornUI:
   replicas: 1
+
+ingress:
+  enabled: true
+  ingressClassName: nginx
+  host: longhorn.chijun.website
+  path: /
+  tls:
+    host: "*.chijun.website"
+    tlsSecret: wildcard-chijun-website
