@@ -13,3 +13,6 @@ env:
 
 extraArgs:
   cloudflare-record-comment: "provisioned by external-dns"
+
+excludeDomains:
+  - "*.chijun.website"
