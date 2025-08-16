@@ -16,3 +16,4 @@ generators:
 
 resources:
   - namespace.yaml
+  - connector.yaml
