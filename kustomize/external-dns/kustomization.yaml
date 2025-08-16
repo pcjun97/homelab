@@ -13,3 +13,6 @@ helmCharts:
 
 generators:
   - ksops.yaml
+
+resources:
+  - namespace.yaml
