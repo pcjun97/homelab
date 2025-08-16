@@ -4,5 +4,5 @@ metadata:
   name: homelab-k3s
 spec:
   tags:
-    - homelab-k3s-connector
+    - tag:homelab-k3s-connector
   appConnector: {}
