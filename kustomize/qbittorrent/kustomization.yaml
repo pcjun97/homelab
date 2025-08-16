@@ -11,4 +11,4 @@ resources:
 
 images:
   - name: "linuxserver/qbittorrent"
-    newTag: "20.04.1"
+    newTag: "4.6.7"
