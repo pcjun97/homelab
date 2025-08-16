@@ -2,9 +2,6 @@ defaultSettings:
   defaultDataPath: /mnt/data
   defaultReplicaCount: 1
 
-helmPreUpgradeCheckerJob:
-  enabled: false
-
 preUpgradeChecker:
   jobEnabled: false
 
