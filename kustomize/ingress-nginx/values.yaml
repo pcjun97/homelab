@@ -2,25 +2,3 @@ controller:
   hostname: ingress-nginx
   service:
     type: ClusterIP
-  extraContainers:
-    - name: tailscale
-      image: "ghcr.io/tailscale/tailscale:v1.86.2"
-      imagePullPolicy: IfNotPresent
-      env:
-        - name: TS_USERSPACE
-          value: "false"
-        - name: TS_AUTHKEY
-          valueFrom:
-            secretKeyRef:
-              name: ingress-nginx-tailscale
-              key: authKey
-        - name: TS_ACCEPT_DNS
-          value: "true"
-        - name: TS_TAILSCALED_EXTRA_ARGS
-          value: "--state=mem"
-        - name: TS_EXTRA_ARGS
-          value: --advertise-tags=tag:homelab-ingress-nginx
-      securityContext:
-        capabilities:
-          add:
-            - NET_ADMIN
