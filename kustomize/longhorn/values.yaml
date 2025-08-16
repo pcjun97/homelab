@@ -21,7 +21,5 @@ ingress:
   enabled: true
   ingressClassName: nginx
   host: longhorn.chijun.website
-  path: /
-  tls:
-    host: "*.chijun.website"
-    tlsSecret: wildcard-chijun-website
+  tls: true
+  tlsSecret: wildcard-chijun-website
