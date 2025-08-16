@@ -1,0 +1,11 @@
+operatorConfig:
+  defaultTags:
+    - tag:homelab-k3s-operator
+  hostname: homelab-k3s-operator
+
+authSecretVolume:
+  secret:
+    secretName: tailscale-operator-oauth
+
+ingressClassName:
+  enabled: false
