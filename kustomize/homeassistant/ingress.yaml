@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: homeassistant
+  labels:
+    app.kubernetes.io/name: homeassistant
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: home.chijun.website
+      http:
+        paths:
+        - backend:
+            service:
+              name: homeassistant
+              port:
+                name: http
+          path: /
+          pathType: Prefix
+  tls:
+    - hosts:
+      - '*.chijun.website'
+      secretName: wildcard-chijun-website
