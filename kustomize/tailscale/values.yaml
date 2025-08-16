@@ -7,5 +7,5 @@ authSecretVolume:
   secret:
     secretName: tailscale-operator-oauth
 
-ingressClassName:
+ingressClass:
   enabled: false
