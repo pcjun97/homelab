@@ -1,0 +1,11 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: wildcard-chijun-website
+spec:
+  dnsNames:
+    - '*.chijun.website'
+  issuerRef:
+    kind: ClusterIssuer
+    name: letsencrypt
+  secretName: wildcard-chijun-website

@@ -4,6 +4,7 @@ kind: Kustomization
 resources:
   - namespace.yaml
   - clusterissuer.yaml
+  - cert.yaml
 
 helmCharts:
   - name: cert-manager
