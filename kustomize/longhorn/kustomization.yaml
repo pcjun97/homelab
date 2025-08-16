@@ -9,25 +9,25 @@ resources:
 helmCharts:
   - name: longhorn
     repo: https://charts.longhorn.io
-    version: 1.6.4
+    version: 1.7.3
     releaseName: longhorn
     namespace: longhorn-system
     includeCRDs: true
     valuesFile: values.yaml
       
 
-patchesStrategicMerge:
-  - |-
-    $patch: delete
-    apiVersion: batch/v1
-    kind: Job
-    metadata:
-      name: longhorn-uninstall
-      namespace: longhorn-system
-  - |-
-    $patch: delete
-    apiVersion: batch/v1
-    kind: Job
-    metadata:
-      name: longhorn-post-upgrade
-      namespace: longhorn-system
+patches:
+  - patch: |-
+      $patch: delete
+      apiVersion: batch/v1
+      kind: Job
+      metadata:
+        name: longhorn-uninstall
+        namespace: longhorn-system
+  - patch: |-
+      $patch: delete
+      apiVersion: batch/v1
+      kind: Job
+      metadata:
+        name: longhorn-post-upgrade
+        namespace: longhorn-system
