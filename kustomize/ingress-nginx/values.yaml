@@ -1,4 +1,6 @@
 controller:
-  hostname: ingress-nginx
   service:
-    type: ClusterIP
+    type: LoadBalancer
+    loadBalancerClass: tailscale
+    annotations:
+      tailscale.com/tags: tag:homelab-k3s-ingress-nginx
