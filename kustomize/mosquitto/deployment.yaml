@@ -22,3 +22,11 @@ spec:
             - name: mqtt
               containerPort: 1883
           resources: {}
+          volumeMounts:
+            - mountPath: /mosquitto/config/mosquitto.conf
+              name: configmap
+              subPath: mosquitto.conf
+      volumes:
+        - name: configmap
+          configMap:
+            name: mosquitto
