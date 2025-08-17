@@ -6,6 +6,7 @@ namespace: home-assistant
 resources:
   - deployment.yaml
   - service.yaml
+  - configmap.yaml
 
 images:
   - name: eclipse-mosquitto
