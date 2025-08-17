@@ -30,11 +30,11 @@ spec:
               name: config
             - mountPath: /config/configuration.yaml
               subPath: configuration.yaml
-              name: config
+              name: configmap
       volumes:
         - name: config
           persistentVolumeClaim:
             claimName: home-assistant-config
-        - name: configmap-file
+        - name: configmap
           configMap:
             name: home-assistant
