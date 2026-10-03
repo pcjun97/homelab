@@ -5,7 +5,6 @@ This project stores configurations of services in my homelab.
 ## TODO
 
 - Add more nodes for a high-availability setup
-- Enable longhorn's replication
 - Implement solution for backup to offsite storage
 - Include IaC (Infrastructure as Code) for server setup (OS & packages)
 - Add and improve documentations
@@ -44,28 +43,11 @@ with the following optional addons disabled:
 Third-party apps/services:
 
 - [argo-cd](https://argoproj.github.io/cd://argoproj.github.io/cd/)
-- [cert-manager](https://cert-manager.io://cert-manager.io/)
-- [cloudflared](https://developers.cloudflare.com/cloudflare-one/tutorials/many-cfd-one-tunnel/)
-- [firefly-iii](https://www.firefly-iii.org://www.firefly-iii.org/)
-- [grafana](https://grafana.com/)
-- [httpbin](https://httpbin.org/)
-- [ingress-nginx](https://kubernetes.github.io/ingress-nginx/)
 - [jellyfin](https://jellyfin.org/)
-- [kube-state-metrics](https://github.com/kubernetes/kube-state-metrics)
-- [loki](https://grafana.com/oss/loki/)
-- [longhorn](https://longhorn.io/)
 - [metrics-server](https://github.com/kubernetes-sigs/metrics-server)
-- [minio](https://min.io/)
 - [nvidia-device-plugin](https://github.com/NVIDIA/k8s-device-plugin)
-- [prometheus](https://prometheus.io://prometheus.io/)
-- [promtail](https://grafana.com/docs/loki/latest/clients/promtail/)
 - [qbittorrent](https://www.qbittorrent.org/)
-- [syncthing](https://syncthing.net/)
 - [tailscaled](https://tailscale.com/kb/1185/kubernetes/)
-
-Self-developed apps/services:
-
-- cfts-ddns (monitor and update domains to point to specific tailscale machines private IPs)
 
 ## Tools
 
