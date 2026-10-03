@@ -3,19 +3,12 @@ kind: Ingress
 metadata:
   name: qbittorrent
 spec:
-  ingressClassName: nginx
-  rules:
-    - host: "qbit.chijun.website"
-      http:
-        paths:
-          - pathType: Prefix
-            path: "/"
-            backend:
-              service:
-                name: qbittorrent
-                port:
-                  number: 80
+  ingressClassName: tailscale
+  defaultBackend:
+    service:
+      name: qbittorrent
+      port:
+        number: 80
   tls:
     - hosts:
-        - "*.chijun.website"
-      secretName: wildcard-chijun-website
+        - qbittorrent
