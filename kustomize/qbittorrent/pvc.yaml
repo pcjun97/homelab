@@ -3,8 +3,9 @@ kind: PersistentVolumeClaim
 metadata:
   name: qbittorent-config
 spec:
+  storageClassName: local-fast
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 10Mi
+      storage: 1Gi

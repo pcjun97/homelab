@@ -1,10 +1,11 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: media-storage
+  name: media
 spec:
+  storageClassName: local-bulk
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
   resources:
     requests:
-      storage: 1536Gi
+      storage: 800Gi
