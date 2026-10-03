@@ -3,5 +3,5 @@ operatorConfig:
     - tag:homelab-k3s-operator
   hostname: homelab-k3s-operator
 
-ingressClass:
-  enabled: false
+proxyConfig:
+  defaultTags: tag:homelab-k3s-ingress

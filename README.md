@@ -56,11 +56,9 @@ Third-party apps/services:
 
 ## Miscellaneous
 
-### Public & Private services
+### Networking
 
-Public endpoints are served using [Cloudflare Tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/), pointing to ingress-nginx.
-
-Private endpoints are served using Tailscale, with each ingress-nginx instance having one tailscale sidecar, giving each of them a private tailscale IP.
-One or more A records with the same domain are created that point to these IPs (with the help of cfts-ddns).
-This allows any tailscale-connected clients to access these endpoints by resolving the domain through public DNS servers.
-
+All endpoints are private and only reachable over Tailscale.
+Each `Ingress` uses the `tailscale` ingress class from the Tailscale operator,
+which gives the service its own tailnet device at `https://<name>.<tailnet>.ts.net` with a certificate issued by Tailscale.
+MagicDNS and HTTPS must be enabled for the tailnet.
