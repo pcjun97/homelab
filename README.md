@@ -52,7 +52,8 @@ Third-party apps/services:
 ## Tools
 
 - GitOps solution of choice is combination of [kustomize](https://kubectl.docs.kubernetes.io/references/kustomize/) and [argo-cd](https://argo-cd.readthedocs.io/en/stable/)
-- Secrets are encrypted using [sops](https://github.com/mozilla/sops) and [ksops](https://github.com/viaduct-ai/kustomize-sops)
+- No secrets are stored in git. The Tailscale operator OAuth secret is created by hand before syncing:
+  `kubectl create namespace tailscale && kubectl -n tailscale create secret generic operator-oauth --from-literal=client_id=... --from-literal=client_secret=...`
 
 ## Miscellaneous
 

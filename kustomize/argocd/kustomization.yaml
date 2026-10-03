@@ -15,6 +15,3 @@ helmCharts:
     namespace: argocd
     includeCRDs: true
     valuesFile: values.yaml
-
-generators:
-  - ksops.yaml
