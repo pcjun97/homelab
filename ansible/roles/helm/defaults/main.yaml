@@ -1,1 +1,1 @@
-helm_version: v3.22.0
+helm_homebrew_path: /home/linuxbrew/.linuxbrew/bin

@@ -32,7 +32,7 @@ The rest of the host is set up with Ansible (`ansible/`), which installs:
   - traefik
   - local-storage (replaced by a self-managed local-path-provisioner)
   - metrics-server
-- [helm](https://helm.sh/), used to render charts when bootstrapping Argo CD
+- [helm](https://helm.sh/) (through Homebrew), used to render charts when bootstrapping Argo CD
 
 ## Services
 
@@ -58,8 +58,12 @@ Third-party apps/services:
    - Add `tag:homelab-k3s-operator` and `tag:homelab-k3s-ingress` to `tagOwners`, with the operator tag owning the ingress tag
    - Create an OAuth client for the operator, tagged `tag:homelab-k3s-operator`, with the scopes listed in the
      [operator setup guide](https://tailscale.com/kb/1236/kubernetes-operator) (at least Devices Core and Auth Keys, write)
-2. Set up the host (add `--connection=local` when running on the host itself):
+2. Set up the host. This needs Ansible and [Homebrew](https://brew.sh) installed on the host first.
+   Debian's `ansible` package includes the `community.general` collection; with plain `ansible-core`,
+   run `ansible-galaxy collection install -r requirements.yaml` as well.
+   Add `--connection=local` when running on the host itself:
    ```
+   sudo apt install ansible
    cd ansible && ansible-playbook site.yaml --ask-become-pass
    ```
 3. Create the Tailscale operator OAuth secret:

@@ -1,15 +1,17 @@
-- name: Check installed helm version
-  ansible.builtin.command: helm version --short
-  register: helm_installed
-  changed_when: false
-  failed_when: false
+- name: Check that Homebrew is installed
+  ansible.builtin.stat:
+    path: "{{ helm_homebrew_path }}/brew"
+  register: helm_homebrew
+
+- name: Fail if Homebrew is missing
+  ansible.builtin.fail:
+    msg: "Homebrew was not found at {{ helm_homebrew_path }}. Install it first: https://brew.sh"
+  when: not helm_homebrew.stat.exists
 
 - name: Install helm
-  when: helm_version not in helm_installed.stdout | default('')
-  ansible.builtin.unarchive:
-    src: "https://get.helm.sh/helm-{{ helm_version }}-linux-amd64.tar.gz"
-    dest: /usr/local/bin
-    remote_src: true
-    extra_opts:
-      - --strip-components=1
-      - linux-amd64/helm
+  become: true
+  become_user: "{{ homelab_user }}"
+  community.general.homebrew:
+    name: helm
+    state: present
+    path: "{{ helm_homebrew_path }}"
