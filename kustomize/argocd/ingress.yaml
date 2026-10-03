@@ -3,19 +3,12 @@ kind: Ingress
 metadata:
   name: argocd
 spec:
-  ingressClassName: nginx
-  rules:
-    - host: "argocd.chijun.website"
-      http:
-        paths:
-          - pathType: Prefix
-            path: "/"
-            backend:
-              service:
-                name: argocd-server
-                port:
-                  name: http
+  ingressClassName: tailscale
+  defaultBackend:
+    service:
+      name: argocd-server
+      port:
+        number: 80
   tls:
     - hosts:
-        - "*.chijun.website"
-      secretName: wildcard-chijun-website
+        - argocd
