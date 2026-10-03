@@ -1,0 +1,6 @@
+write-kubeconfig-mode: "0600"
+disable-helm-controller: true
+disable:
+{% for component in k3s_disable %}
+  - {{ component }}
+{% endfor %}

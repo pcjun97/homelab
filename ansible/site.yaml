@@ -1,0 +1,6 @@
+- name: Set up homelab host
+  hosts: november
+  become: true
+  roles:
+    - k3s
+    - helm
