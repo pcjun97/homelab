@@ -5,12 +5,3 @@ namespace: default
 
 resources:
   - pvc.yaml
-  - deployment.yaml
-  - rbac.yaml
-
-generators:
-  - ksops.yaml
-
-images:
-  - name: "ghcr.io/tailscale/tailscale"
-    newTag: "v1.86.2"

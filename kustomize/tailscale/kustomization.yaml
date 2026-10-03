@@ -11,8 +11,5 @@ helmCharts:
     namespace: tailscale
     valuesFile: values.yaml
 
-generators:
-  - ksops.yaml
-
 resources:
   - namespace.yaml
