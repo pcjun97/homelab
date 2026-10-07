@@ -1,0 +1,17 @@
+- name: Check that Homebrew is installed
+  ansible.builtin.stat:
+    path: "{{ helm_homebrew_path }}/brew"
+  register: helm_homebrew
+
+- name: Fail if Homebrew is missing
+  ansible.builtin.fail:
+    msg: "Homebrew was not found at {{ helm_homebrew_path }}. Install it first: https://brew.sh"
+  when: not helm_homebrew.stat.exists
+
+- name: Install helm
+  become: true
+  become_user: "{{ homelab_user }}"
+  community.general.homebrew:
+    name: helm
+    state: present
+    path: "{{ helm_homebrew_path }}"

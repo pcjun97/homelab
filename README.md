@@ -16,25 +16,23 @@ The homelab runs on a single machine with the following specifications:
 
 - Intel i5-3330
 - 16GB RAM (8GB+8GB)
-- 128GB SSD
-- 512GB HDD + 1TB HDD (LVM)
+- 960GB SSD (OS + `/mnt/fast`)
+- 1TB HDD (`/mnt/bulk`)
 - Nvidia 1050Ti
 
 ## Platform
 
-The operating system of choice is Debian 11 (bullseye), with the following packages installed:
+The operating system of choice is Debian 13 (trixie), with [tailscale](https://tailscale.com/kb/1031/install-linux/) installed.
 
-- [tailscale](https://tailscale.com/kb/1031/install-linux/)
-- [nvidia-container-toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#step-2-install-nvidia-container-toolkit)
+The rest of the host is set up with Ansible (`ansible/`), which installs:
 
-A single-node [k3s](https://docs.k3s.io/) cluster is installed,
-with the following optional addons disabled:
-
-- helm-controller
-- servicelb
-- traefik
-- local-storage (replaced by a self-managed local-path-provisioner)
-- metrics-server
+- a single-node [k3s](https://docs.k3s.io/) cluster, with the following optional addons disabled:
+  - helm-controller
+  - servicelb
+  - traefik
+  - local-storage (replaced by a self-managed local-path-provisioner)
+  - metrics-server
+- [helm](https://helm.sh/) (through Homebrew), used to render charts when bootstrapping Argo CD
 
 ## Services
 
@@ -51,8 +49,38 @@ Third-party apps/services:
 ## Tools
 
 - GitOps solution of choice is combination of [kustomize](https://kubectl.docs.kubernetes.io/references/kustomize/) and [argo-cd](https://argo-cd.readthedocs.io/en/stable/)
-- No secrets are stored in git. The Tailscale operator OAuth secret is created by hand before syncing:
-  `kubectl create namespace tailscale && kubectl -n tailscale create secret generic operator-oauth --from-literal=client_id=... --from-literal=client_secret=...`
+- No secrets are stored in git. The Tailscale operator OAuth secret is created by hand (see [Bootstrap](#bootstrap)).
+
+## Bootstrap
+
+1. In the Tailscale admin console:
+   - Enable MagicDNS and HTTPS certificates
+   - Add `tag:homelab-k3s-operator` and `tag:homelab-k3s-ingress` to `tagOwners`, with the operator tag owning the ingress tag
+   - Create an OAuth client for the operator, tagged `tag:homelab-k3s-operator`, with the scopes listed in the
+     [operator setup guide](https://tailscale.com/kb/1236/kubernetes-operator) (at least Devices Core and Auth Keys, write)
+2. Set up the host. This needs Ansible and [Homebrew](https://brew.sh) installed on the host first.
+   Debian's `ansible` package includes the `community.general` collection; with plain `ansible-core`,
+   run `ansible-galaxy collection install -r requirements.yaml` as well.
+   Add `--connection=local` when running on the host itself:
+   ```
+   sudo apt install ansible
+   cd ansible && ansible-playbook site.yaml --ask-become-pass
+   ```
+3. Create the Tailscale operator OAuth secret:
+   ```
+   kubectl create namespace tailscale
+   kubectl -n tailscale create secret generic operator-oauth \
+     --from-literal=client_id=... --from-literal=client_secret=...
+   ```
+4. Install Argo CD, then the ApplicationSet that creates one application per directory under `kustomize/`:
+   ```
+   kubectl kustomize --enable-helm kustomize/argocd | kubectl apply --server-side -f -
+   kubectl apply -k kustomize/homelab
+   ```
+5. Open the Argo CD UI (`kubectl -n argocd port-forward svc/argocd-server 8080:80`, user `admin`, password from
+   `kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d`)
+   and sync `local-path-provisioner` and `tailscale` first, then the other applications.
+   Once `tailscale` is synced, Argo CD is also reachable at `https://argocd.<tailnet>.ts.net`.
 
 ## Miscellaneous
 
