@@ -1,0 +1,23 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: local-fast
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "true"
+provisioner: rancher.io/local-path
+volumeBindingMode: WaitForFirstConsumer
+reclaimPolicy: Retain
+parameters:
+  nodePath: /mnt/fast/k8s
+  pathPattern: "{{ .PVC.Namespace }}/{{ .PVC.Name }}/"
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: local-bulk
+provisioner: rancher.io/local-path
+volumeBindingMode: WaitForFirstConsumer
+reclaimPolicy: Retain
+parameters:
+  nodePath: /mnt/bulk/k8s
+  pathPattern: "{{ .PVC.Namespace }}/{{ .PVC.Name }}/"

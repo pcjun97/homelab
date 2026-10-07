@@ -26,8 +26,6 @@ The operating system of choice is Debian 11 (bullseye), with the following packa
 
 - [tailscale](https://tailscale.com/kb/1031/install-linux/)
 - [nvidia-container-toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#step-2-install-nvidia-container-toolkit)
-- [open-iscsi](https://staging--longhornio.netlify.app/docs/0.8.1/deploy/install/#installing-open-iscsi)
-- [nfs-common](https://longhorn.io/docs/archives/1.1.0/deploy/install/#installing-nfsv4-client)
 
 A single-node [k3s](https://docs.k3s.io/) cluster is installed,
 with the following optional addons disabled:
@@ -35,7 +33,7 @@ with the following optional addons disabled:
 - helm-controller
 - servicelb
 - traefik
-- local-storage
+- local-storage (replaced by a self-managed local-path-provisioner)
 - metrics-server
 
 ## Services
@@ -44,6 +42,7 @@ Third-party apps/services:
 
 - [argo-cd](https://argoproj.github.io/cd://argoproj.github.io/cd/)
 - [jellyfin](https://jellyfin.org/)
+- [local-path-provisioner](https://github.com/rancher/local-path-provisioner)
 - [metrics-server](https://github.com/kubernetes-sigs/metrics-server)
 - [nvidia-device-plugin](https://github.com/NVIDIA/k8s-device-plugin)
 - [qbittorrent](https://www.qbittorrent.org/)
@@ -63,3 +62,10 @@ All endpoints are private and only reachable over Tailscale.
 Each `Ingress` uses the `tailscale` ingress class from the Tailscale operator,
 which gives the service its own tailnet device at `https://<name>.<tailnet>.ts.net` with a certificate issued by Tailscale.
 MagicDNS and HTTPS must be enabled for the tailnet.
+
+### Storage
+
+Volumes are provisioned by local-path-provisioner into `<disk>/k8s/<namespace>/<pvc>/`, with `reclaimPolicy: Retain`:
+
+- `local-fast` (default): `/mnt/fast` on the SSD, for app config
+- `local-bulk`: `/mnt/bulk` on the HDD, for media (the `media` PVC shared by jellyfin and qbittorrent)

@@ -3,6 +3,7 @@ kind: PersistentVolumeClaim
 metadata:
   name: jellyfin-config
 spec:
+  storageClassName: local-fast
   accessModes:
     - ReadWriteOnce
   resources:
