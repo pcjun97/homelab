@@ -1,0 +1,9 @@
+cluster_bootstrap_repo_dir: "{{ playbook_dir }}/.."
+# Applications synced once on a fresh cluster, in this order. Later syncs are done by hand in Argo CD.
+cluster_bootstrap_sync_order:
+  - local-path-provisioner
+  - tailscale
+  - metrics-server
+  - argocd
+  - homelab
+cluster_bootstrap_timeout: 300s

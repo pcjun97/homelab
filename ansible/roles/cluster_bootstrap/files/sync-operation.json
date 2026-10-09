@@ -1,0 +1,11 @@
+{
+  "operation": {
+    "initiatedBy": {
+      "username": "ansible-bootstrap"
+    },
+    "sync": {
+      "revision": "HEAD",
+      "syncOptions": ["ServerSideApply=true"]
+    }
+  }
+}

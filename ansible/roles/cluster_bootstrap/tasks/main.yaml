@@ -1,0 +1,11 @@
+- name: Create the Tailscale operator OAuth secret
+  ansible.builtin.import_tasks: tailscale_secret.yaml
+
+- name: Install Argo CD and the ApplicationSet
+  ansible.builtin.import_tasks: argocd.yaml
+
+- name: Sync applications that have never been synced
+  ansible.builtin.include_tasks: sync_app.yaml
+  loop: "{{ cluster_bootstrap_sync_order }}"
+  loop_control:
+    loop_var: cluster_bootstrap_app
