@@ -10,7 +10,5 @@ resources:
   - pvc.yaml
 
 images:
-  - name: debian
-    newTag: stable-slim
-  - name: "linuxserver/jellyfin"
-    newTag: "12.1ubu2604-ls51"
+  - name: "jellyfin/jellyfin"
+    newTag: "12.2"
