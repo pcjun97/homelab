@@ -26,6 +26,7 @@ The operating system of choice is Debian 13 (trixie), with [tailscale](https://t
 
 The rest of the host is set up with Ansible (`ansible/`), which installs:
 
+- smartd (SMART monitoring with a daily short and weekly long self-test), weekly TRIM for the SSD, and a 256M journal limit
 - the NVIDIA driver from Debian's `non-free` (the 550 branch, which still supports Pascal GPUs) and the
   [NVIDIA container toolkit](https://github.com/NVIDIA/nvidia-container-toolkit), which k3s detects as the `nvidia` runtime
 - a single-node [k3s](https://docs.k3s.io/) cluster, with the following optional addons disabled:
@@ -113,6 +114,29 @@ Volumes are provisioned by local-path-provisioner into `<disk>/k8s/<namespace>/<
 
 - `local-fast` (default): `/mnt/fast` on the SSD, for app config
 - `local-bulk`: `/mnt/bulk` on the HDD, for media (the `media` PVC shared by jellyfin and qbittorrent)
+
+### Media
+
+The shared `media` volume (`/data/media` in the pods, `/mnt/bulk/k8s/default/media` on the host) is split into one folder per
+Jellyfin library. Japanese content has its own libraries because the metadata language is set per library.
+
+| Folder | Jellyfin library | Type | Metadata language / country |
+|---|---|---|---|
+| `movies` | Movies | Movies | English / US |
+| `movies-japanese` | Japanese Movies | Movies | Japanese / Japan |
+| `tv` | TV Series | Shows | English / US |
+| `tv-japanese` | Japanese TV Series | Shows | Japanese / Japan |
+| `anime` | Anime (series and films) | Shows | Japanese / Japan |
+| `documentaries` | Documentaries | Shows | English / US |
+
+qbittorrent saves to `downloads/`, keeps in-progress torrents in `downloads/incomplete/`, and has one category per library folder
+that saves finished torrents straight into it.
+
+Playback languages are per user: preferred audio language English, "Play default audio track regardless of language" on, and
+subtitle mode Smart with English subtitles, so Japanese audio plays with English subtitles and English audio without.
+
+In Jellyfin's transcoding settings, hardware acceleration is NVIDIA NVENC, and **Throttle transcodes** and **Delete segments** are
+enabled so transcodes fit in the 6Gi RAM volume.
 
 ### Remote kubectl
 

@@ -80,33 +80,35 @@ Notes and decisions from planning the rebuild of `november`, the single homelab 
       Argo CD at `https://argocd.tailbc93b.ts.net`
 - [x] Tailscale admin console: MagicDNS and HTTPS on, default tags in `tagOwners`, OAuth client with Devices Core, Auth Keys and Services
 
+- [x] NVIDIA role: Debian's 550 driver (NVIDIA's Debian 13 repository ships 590+, which dropped Pascal) and the container toolkit (#163)
+- [x] Jellyfin on the official image `jellyfin/jellyfin:12.2` (runs as 1000, transcodes in a 6Gi RAM volume at `/config/transcodes`),
+      qbittorrent 5.2.4 with `PUID`/`PGID=1000` (#164)
+- [x] **All apps running (2026-10-10):** nvidia, media, jellyfin and qbittorrent Synced and Healthy; NVENC available inside Jellyfin
+- [x] Media layout decided (one folder and library per category, Japanese metadata for Japanese content); see the README
+
 ### Lessons from the MVP bring-up
 
 - k3s's bundled `kubectl` ignores `~/.kube/config` unless `KUBECONFIG` is set (fixed in #158).
 - The ingress devices need **HTTPS certificates** enabled for the tailnet; check `tailscale status --json` shows `CertDomains`.
+- Jellyfin 12.x disables transcode throttling by default (a startup migration); enable it with Delete segments, or the RAM
+  transcode volume can fill up.
+- Disk names (`sda`/`sdb`) swapped after a reboot; mounts use UUIDs and smartd scans all disks, so nothing depends on them.
+- TRIM works on the SSD even with the SATA controller in IDE mode, and Debian enables `fstrim.timer` by default.
 - If ingresses get no address, check the operator logs: `requested tags [tag:k8s] are invalid or not permitted` means
   `tagOwners` doesn't let `tag:k8s-operator` own `tag:k8s`. The operator recovers by itself once the policy is fixed.
 
 ### To do
 
 - [ ] Argo CD: change the `admin` password and delete `argocd-initial-admin-secret`
-- [ ] Apps: NVIDIA driver and container toolkit in Ansible (Debian's 550 driver, since NVIDIA's Debian 13 repository ships 590+,
-      which dropped Pascal); sync `nvidia`, `media`, jellyfin and qbittorrent
-- [ ] App updates: jellyfin on the official image `jellyfin/jellyfin:12.2` (semver tags, CJK fonts and NVIDIA settings built in;
-      runs as 1000:1000 via `securityContext`), transcodes on a 6Gi RAM-backed emptyDir at `/config/transcodes`, `/cache` on an
-      emptyDir; qbittorrent `5.2.4` with `PUID`/`PGID=1000`. After the first start, in Dashboard → Playback → Transcoding: confirm
-      the transcode path is `/config/transcodes`, choose NVIDIA NVENC, and enable **Throttle transcodes** and **Delete segments**
-      (without them a long transcode can outgrow the 6Gi `sizeLimit`, and the pod gets evicted mid-playback).
-      qbittorrent 5.x prints a temporary WebUI password in its logs on first start
 - [ ] FileBrowser Quantum `1.5.6-stable` at `files.tailbc93b.ts.net`, mounting `media`, data on `local-fast`
       (change the default `admin`/`admin` password on first login)
 - [ ] CI workflow (render all apps, ansible-lint) as a required check
 - [ ] Renovate config (automerge patch/minor, majors via Dependency Dashboard approval, weekly schedule,
       custom rule for the k3s version in Ansible, versioning rule for linuxserver tags); clean up the stale `renovate/*` branches
-- [ ] Ansible: smartd, `fstrim.timer`, journald and container log limits
+- [ ] Ansible: smartd, `fstrim.timer` and a journald size limit (container logs are already capped by the kubelet at 10Mi × 5)
 - [ ] Create the B2 bucket (lifecycle: keep prior versions 30 days) and a bucket-scoped application key
 - [ ] rclone backup job: Ansible role + systemd timer
 - [ ] Alerts: create the ntfy topic and the healthchecks.io checks (backup + heartbeat, forwarding to ntfy); Ansible sets up smartd
       (alerts through ntfy), a daily disk-space check, healthchecks pings in the backup job, and the heartbeat timer
 - [ ] Optional: keep the Tailscale policy file in the repo and sync it with Tailscale's GitHub Action
-- [ ] Turn off Tailscale key expiry for `november`; switch the SATA controller to AHCI in the BIOS
+- [ ] Turn off Tailscale key expiry for `november`; switch the SATA controller to AHCI in the BIOS (optional: TRIM already works)

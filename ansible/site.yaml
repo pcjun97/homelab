@@ -2,6 +2,8 @@
   hosts: november
   become: true
   roles:
+    - host
+    - smartd
     - nvidia
     - k3s
     - helm
