@@ -94,7 +94,7 @@ Notes and decisions from planning the rebuild of `november`, the single homelab 
 - [ ] Apps: NVIDIA driver and container toolkit in Ansible (Debian's 550 driver, since NVIDIA's Debian 13 repository ships 590+,
       which dropped Pascal); sync `nvidia`, `media`, jellyfin and qbittorrent
 - [ ] App updates: jellyfin 12.1 and qbittorrent 5.2.4 images; `PUID`/`PGID=1000`; jellyfin transcodes on a 4Gi RAM-backed emptyDir
-      at `/config/cache/transcodes` (then set the transcode path in Dashboard → Playback → Transcoding).
+      at `/config/data/transcodes` (the image's default; confirm in Dashboard → Playback → Transcoding after the first start).
       qbittorrent 5.x prints a temporary WebUI password in its logs on first start
 - [ ] FileBrowser Quantum `1.5.6-stable` at `files.tailbc93b.ts.net`, mounting `media`, data on `local-fast`
       (change the default `admin`/`admin` password on first login)

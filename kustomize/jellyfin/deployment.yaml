@@ -35,6 +35,10 @@ spec:
           env:
             - name: NVIDIA_VISIBLE_DEVICES
               value: "all"
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
           ports:
             - containerPort: 8096
               name: http
@@ -43,6 +47,8 @@ spec:
               name: media
             - mountPath: /config
               name: config
+            - mountPath: /config/data/transcodes
+              name: transcodes
             - mountPath: /usr/share/fonts/opentype/noto
               name: noto
       volumes:
@@ -54,3 +60,7 @@ spec:
             claimName: jellyfin-config
         - name: noto
           emptyDir: {}
+        - name: transcodes
+          emptyDir:
+            medium: Memory
+            sizeLimit: 4Gi
