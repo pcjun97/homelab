@@ -62,7 +62,15 @@ Third-party apps/services:
        "tag:k8s": ["tag:k8s-operator"],
      },
      ```
-     and, if the policy doesn't allow all traffic, a grant letting your devices reach `tag:k8s` on port 443
+     and, if the policy doesn't allow all traffic, a grant letting your devices reach `tag:k8s` and `tag:k8s-operator` on port 443
+   - Give tailnet admins cluster-admin through the operator's API server proxy:
+     ```jsonc
+     "grants": [{
+       "src": ["autogroup:admin"],
+       "dst": ["tag:k8s-operator"],
+       "app": { "tailscale.com/cap/kubernetes": [{ "impersonate": { "groups": ["system:masters"] } }] },
+     }],
+     ```
    - Create an OAuth client (Settings → Trust credentials) tagged `tag:k8s-operator`, with write access to
      Devices Core, Auth Keys and Services, as in the
      [operator install guide](https://tailscale.com/docs/kubernetes-operator/install-operator)
@@ -105,3 +113,15 @@ Volumes are provisioned by local-path-provisioner into `<disk>/k8s/<namespace>/<
 
 - `local-fast` (default): `/mnt/fast` on the SSD, for app config
 - `local-bulk`: `/mnt/bulk` on the HDD, for media (the `media` PVC shared by jellyfin and qbittorrent)
+
+### Remote kubectl
+
+The Tailscale operator runs an [API server proxy](https://tailscale.com/docs/kubernetes-operator/api-server-access) in auth mode.
+Requests are authenticated with the caller's Tailscale identity and mapped to Kubernetes groups by the policy grant above,
+so no Kubernetes credentials leave the host. From any tailnet device with `kubectl` installed:
+
+```
+tailscale configure kubeconfig tailscale-operator
+```
+
+If the cluster can't run pods, the proxy is unavailable too; SSH to the host and use its local kubeconfig instead.
