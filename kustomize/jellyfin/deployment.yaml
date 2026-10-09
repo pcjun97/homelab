@@ -17,24 +17,12 @@ spec:
         app.kubernetes.io/name: jellyfin
     spec:
       runtimeClassName: nvidia
-      initContainers:
-        - name: install-cjk-fonts
-          image: debian
-          command: ["/bin/sh", "-c"]
-          args:
-            - echo "installing fonts-noto-cjk...";
-              apt update;
-              apt install -y fonts-noto-cjk;
-              echo "Done.";
-          volumeMounts:
-            - mountPath: /usr/share/fonts/opentype/noto
-              name: noto
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
       containers:
         - name: jellyfin
-          image: "linuxserver/jellyfin"
-          env:
-            - name: NVIDIA_VISIBLE_DEVICES
-              value: "all"
+          image: "jellyfin/jellyfin"
           ports:
             - containerPort: 8096
               name: http
@@ -43,8 +31,10 @@ spec:
               name: media
             - mountPath: /config
               name: config
-            - mountPath: /usr/share/fonts/opentype/noto
-              name: noto
+            - mountPath: /config/transcodes
+              name: transcodes
+            - mountPath: /cache
+              name: cache
       volumes:
         - name: media
           persistentVolumeClaim:
@@ -52,5 +42,9 @@ spec:
         - name: config
           persistentVolumeClaim:
             claimName: jellyfin-config
-        - name: noto
+        - name: transcodes
+          emptyDir:
+            medium: Memory
+            sizeLimit: 6Gi
+        - name: cache
           emptyDir: {}
