@@ -82,21 +82,19 @@ Third-party apps/services:
    sudo apt install ansible
    cd ansible && ansible-playbook site.yaml --ask-become-pass
    ```
-3. Create the Tailscale operator OAuth secret:
+3. Bootstrap the cluster from the host (no sudo needed; `kubectl` and `helm` must be on the `PATH`):
    ```
-   kubectl create namespace tailscale
-   kubectl -n tailscale create secret generic operator-oauth \
-     --from-literal=client_id=... --from-literal=client_secret=...
+   cd ansible && ansible-playbook bootstrap.yaml
    ```
-4. Install Argo CD, then the ApplicationSet that creates one application per directory under `kustomize/`:
-   ```
-   kubectl kustomize --enable-helm kustomize/argocd | kubectl apply --server-side -f -
-   kubectl apply -k kustomize/homelab
-   ```
-5. Open the Argo CD UI (`kubectl -n argocd port-forward svc/argocd-server 8080:80`, user `admin`, password from
-   `kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d`)
-   and sync `local-path-provisioner` and `tailscale` first, then the other applications.
-   Once `tailscale` is synced, Argo CD is also reachable at `https://argocd.<tailnet>.ts.net`.
+   The playbook skips any step that's already done:
+   - prompts for the Tailscale OAuth client ID and secret (the secret is hidden and never logged)
+     and creates the `operator-oauth` secret
+   - installs Argo CD and the ApplicationSet, which creates one application per directory under `kustomize/`
+   - syncs `local-path-provisioner`, `tailscale`, `metrics-server`, `argocd` and `homelab` in order, waiting for each to
+     become healthy. Only applications that have never been synced are synced, so re-running it never forces a sync.
+4. Sync the remaining applications by hand in Argo CD, at `https://argocd.<tailnet>.ts.net`
+   (user `admin`, password from
+   `kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d`).
 
 ## Miscellaneous
 

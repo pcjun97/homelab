@@ -1,0 +1,43 @@
+- name: Wait for the application to be generated - {{ cluster_bootstrap_app }}
+  ansible.builtin.command: kubectl -n argocd get application {{ cluster_bootstrap_app }}
+  register: cluster_bootstrap_app_exists
+  until: cluster_bootstrap_app_exists.rc == 0
+  retries: 30
+  delay: 5
+  changed_when: false
+
+- name: Check whether the application has been synced before - {{ cluster_bootstrap_app }}
+  ansible.builtin.command: >-
+    kubectl -n argocd get application {{ cluster_bootstrap_app }}
+    -o jsonpath={.status.operationState.phase}
+  register: cluster_bootstrap_app_phase
+  changed_when: false
+
+- name: Sync the application for the first time - {{ cluster_bootstrap_app }}
+  when: cluster_bootstrap_app_phase.stdout == ''
+  block:
+    - name: Start the sync - {{ cluster_bootstrap_app }}
+      ansible.builtin.command:
+        argv:
+          - kubectl
+          - -n
+          - argocd
+          - patch
+          - application
+          - "{{ cluster_bootstrap_app }}"
+          - --type=merge
+          - --patch
+          - '{"operation": {"initiatedBy": {"username": "ansible-bootstrap"}, "sync": {"revision": "HEAD", "syncOptions": ["ServerSideApply=true"]}}}'
+      changed_when: true
+
+    - name: Wait until synced - {{ cluster_bootstrap_app }}
+      ansible.builtin.command: >-
+        kubectl -n argocd wait application {{ cluster_bootstrap_app }}
+        --for=jsonpath={.status.sync.status}=Synced --timeout={{ cluster_bootstrap_timeout }}
+      changed_when: false
+
+    - name: Wait until healthy - {{ cluster_bootstrap_app }}
+      ansible.builtin.command: >-
+        kubectl -n argocd wait application {{ cluster_bootstrap_app }}
+        --for=jsonpath={.status.health.status}=Healthy --timeout={{ cluster_bootstrap_timeout }}
+      changed_when: false

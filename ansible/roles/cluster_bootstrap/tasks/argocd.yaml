@@ -1,0 +1,34 @@
+- name: Check for Argo CD
+  ansible.builtin.command: kubectl -n argocd get deployment argocd-server
+  register: cluster_bootstrap_argocd
+  changed_when: false
+  failed_when: false
+
+- name: Install Argo CD
+  when: cluster_bootstrap_argocd.rc != 0
+  block:
+    - name: Apply the Argo CD manifests
+      ansible.builtin.shell:
+        cmd: set -o pipefail && kubectl kustomize --enable-helm kustomize/argocd | kubectl apply --server-side -f -
+        chdir: "{{ cluster_bootstrap_repo_dir }}"
+        executable: /bin/bash
+      changed_when: true
+
+    - name: Wait for Argo CD to become available
+      ansible.builtin.command: >-
+        kubectl -n argocd wait deployment --all --for=condition=Available
+        --timeout={{ cluster_bootstrap_timeout }}
+      changed_when: false
+
+- name: Check for the ApplicationSet
+  ansible.builtin.command: kubectl -n argocd get applicationset homelab
+  register: cluster_bootstrap_appset
+  changed_when: false
+  failed_when: false
+
+- name: Apply the ApplicationSet
+  ansible.builtin.command:
+    cmd: kubectl apply --server-side -k kustomize/homelab
+    chdir: "{{ cluster_bootstrap_repo_dir }}"
+  when: cluster_bootstrap_appset.rc != 0
+  changed_when: true

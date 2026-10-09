@@ -22,3 +22,6 @@ spec:
         path: "{{ .path.path }}"
       destination:
         name: in-cluster
+      syncPolicy:
+        syncOptions:
+          - ServerSideApply=true
