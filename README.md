@@ -55,9 +55,17 @@ Third-party apps/services:
 
 1. In the Tailscale admin console:
    - Enable MagicDNS and HTTPS certificates
-   - Add `tag:homelab-k3s-operator` and `tag:homelab-k3s-ingress` to `tagOwners`, with the operator tag owning the ingress tag
-   - Create an OAuth client for the operator, tagged `tag:homelab-k3s-operator`, with the scopes listed in the
-     [operator setup guide](https://tailscale.com/kb/1236/kubernetes-operator) (at least Devices Core and Auth Keys, write)
+   - Add the operator's default tags to the policy file:
+     ```jsonc
+     "tagOwners": {
+       "tag:k8s-operator": [],
+       "tag:k8s": ["tag:k8s-operator"],
+     },
+     ```
+     and, if the policy doesn't allow all traffic, a grant letting your devices reach `tag:k8s` on port 443
+   - Create an OAuth client (Settings → Trust credentials) tagged `tag:k8s-operator`, with write access to
+     Devices Core, Auth Keys and Services, as in the
+     [operator install guide](https://tailscale.com/docs/kubernetes-operator/install-operator)
 2. Set up the host. This needs Ansible and [Homebrew](https://brew.sh) installed on the host first.
    Debian's `ansible` package includes the `community.general` collection; with plain `ansible-core`,
    run `ansible-galaxy collection install -r requirements.yaml` as well.
