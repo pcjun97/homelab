@@ -26,6 +26,8 @@ The operating system of choice is Debian 13 (trixie), with [tailscale](https://t
 
 The rest of the host is set up with Ansible (`ansible/`), which installs:
 
+- the NVIDIA driver from Debian's `non-free` (the 550 branch, which still supports Pascal GPUs) and the
+  [NVIDIA container toolkit](https://github.com/NVIDIA/nvidia-container-toolkit), which k3s detects as the `nvidia` runtime
 - a single-node [k3s](https://docs.k3s.io/) cluster, with the following optional addons disabled:
   - helm-controller
   - servicelb

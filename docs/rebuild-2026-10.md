@@ -91,7 +91,8 @@ Notes and decisions from planning the rebuild of `november`, the single homelab 
 ### To do
 
 - [ ] Argo CD: change the `admin` password and delete `argocd-initial-admin-secret`
-- [ ] Apps: NVIDIA driver and container toolkit in Ansible; sync `nvidia`, `media`, jellyfin and qbittorrent
+- [ ] Apps: NVIDIA driver and container toolkit in Ansible (Debian's 550 driver, since NVIDIA's Debian 13 repository ships 590+,
+      which dropped Pascal); sync `nvidia`, `media`, jellyfin and qbittorrent
 - [ ] App updates: jellyfin 12.1 and qbittorrent 5.2.4 images; `PUID`/`PGID=1000`; jellyfin transcodes on a 4Gi RAM-backed emptyDir
       at `/config/cache/transcodes` (then set the transcode path in Dashboard → Playback → Transcoding).
       qbittorrent 5.x prints a temporary WebUI password in its logs on first start

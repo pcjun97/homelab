@@ -1,0 +1,10 @@
+# Debian's packaged driver (550 branch). It supports Pascal (GTX 10 series); NVIDIA's own
+# Debian 13 repository ships 590+, which doesn't.
+nvidia_driver_packages:
+  - linux-headers-amd64
+  - nvidia-kernel-dkms
+  - nvidia-smi
+  - nvidia-persistenced
+  - libcuda1
+  - libnvidia-encode1
+  - libnvcuvid1

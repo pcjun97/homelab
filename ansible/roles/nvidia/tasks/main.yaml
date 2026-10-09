@@ -1,0 +1,62 @@
+- name: Install python3-debian for deb822 repositories
+  ansible.builtin.apt:
+    name: python3-debian
+    state: present
+
+- name: Enable the Debian contrib and non-free components
+  ansible.builtin.deb822_repository:
+    name: debian-nonfree
+    uris: http://deb.debian.org/debian
+    suites:
+      - trixie
+      - trixie-updates
+    components:
+      - contrib
+      - non-free
+
+- name: Enable the Debian security contrib and non-free components
+  ansible.builtin.deb822_repository:
+    name: debian-security-nonfree
+    uris: http://security.debian.org/debian-security
+    suites:
+      - trixie-security
+    components:
+      - contrib
+      - non-free
+
+- name: Add the NVIDIA container toolkit repository
+  ansible.builtin.deb822_repository:
+    name: nvidia-container-toolkit
+    uris: https://nvidia.github.io/libnvidia-container/stable/deb/amd64
+    suites:
+      - /
+    signed_by: https://nvidia.github.io/libnvidia-container/gpgkey
+
+- name: Block the nouveau driver
+  ansible.builtin.copy:
+    src: blacklist-nouveau.conf
+    dest: /etc/modprobe.d/blacklist-nouveau.conf
+    mode: "0644"
+  notify: Update initramfs
+
+- name: Install the NVIDIA driver
+  ansible.builtin.apt:
+    name: "{{ nvidia_driver_packages }}"
+    state: present
+    update_cache: true
+
+- name: Install the NVIDIA container toolkit
+  ansible.builtin.apt:
+    name: nvidia-container-toolkit
+    state: present
+  notify: Restart k3s
+
+- name: Check whether nouveau is still loaded
+  ansible.builtin.command: lsmod
+  register: nvidia_lsmod
+  changed_when: false
+
+- name: Ask for a reboot to switch from nouveau to the NVIDIA driver
+  ansible.builtin.debug:
+    msg: nouveau is still loaded. Reboot the host to load the NVIDIA driver.
+  when: nvidia_lsmod.stdout_lines | select('match', '^nouveau ') | list | length > 0
