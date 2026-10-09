@@ -8,7 +8,7 @@
   ansible.builtin.template:
     src: config.yaml.j2
     dest: /etc/rancher/k3s/config.yaml
-    mode: "0600"
+    mode: "0644"
   notify: Restart k3s
 
 - name: Check installed k3s version
@@ -59,3 +59,8 @@
     owner: "{{ homelab_user }}"
     group: "{{ homelab_user }}"
     mode: "0600"
+
+- name: Point kubectl at the kubeconfig of {{ homelab_user }}
+  ansible.builtin.lineinfile:
+    path: "/home/{{ homelab_user }}/.bashrc"
+    line: export KUBECONFIG="$HOME/.kube/config"
