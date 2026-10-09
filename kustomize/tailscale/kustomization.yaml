@@ -9,7 +9,6 @@ helmCharts:
     version: 1.102.4
     releaseName: tailscale-operator
     namespace: tailscale
-    valuesFile: values.yaml
 
 resources:
   - namespace.yaml
