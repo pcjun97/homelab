@@ -63,4 +63,4 @@ spec:
         - name: transcodes
           emptyDir:
             medium: Memory
-            sizeLimit: 4Gi
+            sizeLimit: 6Gi
