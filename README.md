@@ -122,4 +122,18 @@ so no Kubernetes credentials leave the host. From any tailnet device with `kubec
 tailscale configure kubeconfig tailscale-operator
 ```
 
+On a machine without the `tailscale` CLI, such as WSL with Tailscale running on Windows, create the same kubeconfig by hand.
+The token is a placeholder; the proxy authenticates the connection's Tailscale identity instead:
+
+```
+kubectl config set-cluster homelab --server=https://tailscale-operator.<tailnet>.ts.net
+kubectl config set-credentials tailscale-auth --token=unused
+kubectl config set-context homelab --cluster=homelab --user=tailscale-auth
+kubectl config use-context homelab
+```
+
+If WSL can't resolve or reach tailnet names, enable `networkingMode=mirrored` and `dnsTunneling=true` under `[wsl2]` in
+`%USERPROFILE%\.wslconfig`, then run `wsl --shutdown`.
+
+The first request after the operator starts may time out while the proxy gets its certificate.
 If the cluster can't run pods, the proxy is unavailable too; SSH to the host and use its local kubeconfig instead.
