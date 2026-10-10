@@ -134,7 +134,29 @@ The folders are created by the `media` Ansible role, owned by the homelab user (
 | `anime` | Anime (series and films) | Shows | Japanese / Japan |
 
 qbittorrent saves to `downloads/`, keeps in-progress torrents in `downloads/incomplete/`, and has one category per library folder
-that saves finished torrents straight into it.
+that saves finished torrents straight into it. "Use Category paths in Manual Mode" is enabled, so a relative save path is
+resolved against the category's folder.
+
+Jellyfin expects one folder per show, with the TMDB ID to pin the match:
+
+```
+tv-jp/孤独のグルメ (2012) [tmdbid-55582]/
+├── Season 08/
+│   ├── …S08E01….mkv              ← episodes are matched by SxxEyy in the filename
+│   ├── …S00E06….mkv              ← specials use season 00, numbered as in TMDB's Specials
+│   └── extras/                    ← bonus material, shown as extras
+```
+
+Adding a show in qbittorrent:
+
+1. Choose the category (`tv`, `tv-jp` or `anime`), set the torrent to **Manual** mode, and enter the show folder as a **relative**
+   save path, e.g. `孤独のグルメ (2012) [tmdbid-55582]` (the ID is in the show's TMDB URL).
+2. In the torrent's **Content** tab, rename the release folder to `Season NN`, and rename or move extras and specials
+   (`extras/…`, `…S00Exx…`). qbittorrent renames them on disk and keeps seeding.
+3. To change a save path later, use **Set location** on the torrent so qbittorrent moves the files and keeps seeding.
+   Renaming or moving files outside qbittorrent leaves the torrent with missing files (fixable with Set location and a recheck).
+
+Films can stay in **Automatic** mode: each release folder in `movies` or `movies-jp` is matched as one film.
 
 Playback languages are per user: preferred audio language English, "Play default audio track regardless of language" on, and
 subtitle mode Smart with English subtitles, so Japanese audio plays with English subtitles and English audio without.

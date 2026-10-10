@@ -98,6 +98,12 @@ Notes and decisions from planning the rebuild of `november`, the single homelab 
 - If ingresses get no address, check the operator logs: `requested tags [tag:k8s] are invalid or not permitted` means
   `tagOwners` doesn't let `tag:k8s-operator` own `tag:k8s`. The operator recovers by itself once the policy is fixed.
 
+### Lessons from the first downloads
+
+- qbittorrent 5.2's web UI has no "Use subcategories" option (desktop only); "Use Category paths in Manual Mode" with a relative
+  save path does the same job.
+- qbittorrent's torrent *name* is only a label; renaming the content folder is done in the Content tab.
+
 ### To do
 
 - [ ] Argo CD: change the `admin` password and delete `argocd-initial-admin-secret`
@@ -112,4 +118,10 @@ Notes and decisions from planning the rebuild of `november`, the single homelab 
 - [ ] Alerts: create the ntfy topic and the healthchecks.io checks (backup + heartbeat, forwarding to ntfy); Ansible sets up smartd
       (alerts through ntfy), a daily disk-space check, healthchecks pings in the backup job, and the heartbeat timer
 - [ ] Optional: keep the Tailscale policy file in the repo and sync it with Tailscale's GitHub Action
+- [ ] Later: automate downloads with Sonarr (TV, Japanese TV, anime), Radarr (movies, Japanese movies) and Prowlarr. Prowlarr
+      supports the sources in use: Nyaa (built in; Sonarr's Anime series type handles absolute numbering), AvistaZ (built in,
+      via its API) and the public Knaben (meta-search, a good 1337x substitute) and EZTV. 1337x needs FlareSolverr and still breaks
+      at times (open Prowlarr issues in 2026), so keep grabbing it by hand. qbittorrent categories would move to
+      `downloads/<category>` and Sonarr/Radarr would import into the libraries with hardlinks (same disk). Consider routing
+      qbittorrent through a VPN sidecar (gluetun) because public swarms expose the home IP
 - [ ] Turn off Tailscale key expiry for `november`; switch the SATA controller to AHCI in the BIOS (optional: TRIM already works)
