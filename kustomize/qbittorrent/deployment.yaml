@@ -16,6 +16,9 @@ spec:
       labels:
         app.kubernetes.io/name: qbittorrent
     spec:
+      # Media is a hostPath on this node's HDD
+      nodeSelector:
+        kubernetes.io/hostname: november
       containers:
         - name: qbittorrent
           image: "linuxserver/qbittorrent"

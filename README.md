@@ -115,7 +115,8 @@ Volumes are provisioned by local-path-provisioner into `<disk>/k8s/<namespace>/<
 - `local-fast` (default): `/mnt/fast` on the SSD, for app config
 - `local-bulk`: `/mnt/bulk/k8s` on the HDD, for large app data
 
-Media isn't a PVC: apps mount `/mnt/bulk/media` directly as a `hostPath` volume (see [Media](#media)).
+Media isn't a PVC: apps mount `/mnt/bulk/media` directly as a `hostPath` volume (see [Media](#media)) and are pinned to `november`
+with a `kubernetes.io/hostname` nodeSelector, so they keep running next to the disk if more nodes are added.
 
 ### Media
 

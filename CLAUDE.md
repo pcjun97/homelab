@@ -26,7 +26,8 @@ GitOps config for a single-node k3s homelab on the host `november` (Debian 13), 
   There is no nginx, cert-manager or public domain. The operator uses its default tags, `tag:k8s-operator` and `tag:k8s`.
 - Storage: `local-fast` (default, `/mnt/fast`, SSD) for app config and `local-bulk` (`/mnt/bulk`, HDD) for large data, both from a
   self-run local-path-provisioner with `Retain` and `<namespace>/<pvc>/` folders. Media is not a PVC: apps mount `/mnt/bulk/media`
-  as a `hostPath` volume (`type: Directory`), created by the `media` Ansible role. Avoid write-heavy workloads on the SSD.
+  as a `hostPath` volume (`type: Directory`), created by the `media` Ansible role, and pin themselves to `november` with a
+  `kubernetes.io/hostname` nodeSelector. Avoid write-heavy workloads on the SSD.
 - Apps mounting media run as UID/GID 1000. Apps with a config database use the `Recreate` strategy.
 - There are no secrets in git.
 - Argo sync is manual on purpose: don't add automated sync, prune or selfHeal. Syncs use server-side apply.

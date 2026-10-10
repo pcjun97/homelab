@@ -16,6 +16,9 @@ spec:
       labels:
         app.kubernetes.io/name: jellyfin
     spec:
+      # Media is a hostPath on this node's HDD, and the GPU is here too
+      nodeSelector:
+        kubernetes.io/hostname: november
       runtimeClassName: nvidia
       securityContext:
         runAsUser: 1000
