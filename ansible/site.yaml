@@ -6,7 +6,6 @@
     - alerts
     - smartd
     - media
-    - backup
     - nvidia
     - k3s
     - helm
