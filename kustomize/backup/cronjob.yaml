@@ -1,0 +1,99 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: backup
+spec:
+  schedule: "0 3 * * *"
+  timeZone: Asia/Kuala_Lumpur
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 0
+      # Fail a run that is stuck (e.g. a volume can't be mounted) before the next one is due
+      activeDeadlineSeconds: 79200
+      template:
+        spec:
+          restartPolicy: Never
+          # The config and media volumes are hostPaths on this node
+          nodeSelector:
+            kubernetes.io/hostname: november
+          initContainers:
+            - name: snapshot
+              image: python
+              command: ["python3", "/scripts/snapshot.py"]
+              env:
+                - name: NTFY_TOPIC
+                  valueFrom:
+                    secretKeyRef:
+                      name: backup
+                      key: ntfy_topic
+              volumeMounts:
+                - mountPath: /source/config
+                  name: config
+                  readOnly: true
+                - mountPath: /snapshots
+                  name: snapshots
+                - mountPath: /scripts
+                  name: scripts
+          containers:
+            - name: backup
+              image: rclone/rclone
+              command: ["/bin/sh", "/scripts/backup.sh"]
+              env:
+                # Upload cap in bytes per second; 20M is about 160 Mbit/s
+                - name: BWLIMIT
+                  value: 20M
+                # Fail instead of deleting more remote files than this in one sync
+                - name: MAX_DELETE
+                  value: "500"
+                - name: RCLONE_CONFIG_B2_TYPE
+                  value: b2
+                - name: RCLONE_CONFIG_B2_ACCOUNT
+                  valueFrom:
+                    secretKeyRef:
+                      name: backup
+                      key: b2_key_id
+                - name: RCLONE_CONFIG_B2_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: backup
+                      key: b2_application_key
+                - name: BUCKET
+                  valueFrom:
+                    secretKeyRef:
+                      name: backup
+                      key: bucket
+                - name: NTFY_TOPIC
+                  valueFrom:
+                    secretKeyRef:
+                      name: backup
+                      key: ntfy_topic
+              volumeMounts:
+                - mountPath: /source/config
+                  name: config
+                  readOnly: true
+                - mountPath: /source/media
+                  name: media
+                  readOnly: true
+                - mountPath: /snapshots
+                  name: snapshots
+                  readOnly: true
+                - mountPath: /scripts
+                  name: scripts
+          volumes:
+            # type: Directory makes the pod fail to start if a disk isn't mounted, instead of syncing an empty folder
+            - name: config
+              hostPath:
+                path: /mnt/fast/k8s
+                type: Directory
+            - name: media
+              hostPath:
+                path: /mnt/bulk/media
+                type: Directory
+            - name: snapshots
+              emptyDir: {}
+            - name: scripts
+              configMap:
+                name: backup-scripts

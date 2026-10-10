@@ -93,6 +93,7 @@ Third-party apps/services:
    The playbook skips any step that's already done:
    - prompts for the Tailscale OAuth client ID and secret (the secret is hidden and never logged)
      and creates the `operator-oauth` secret
+   - prompts for the B2 key, bucket and ntfy topic and creates the `backup` secret
    - installs Argo CD and the ApplicationSet, which creates one application per directory under `kustomize/`
    - syncs `local-path-provisioner`, `tailscale`, `metrics-server`, `argocd` and `homelab` in order, waiting for each to
      become healthy. Only applications that have never been synced are synced, so re-running it never forces a sync.
@@ -118,6 +119,37 @@ Volumes are provisioned by local-path-provisioner into `<disk>/k8s/<namespace>/<
 
 Media isn't a PVC: apps mount `/mnt/bulk/media` directly as a `hostPath` volume (see [Media](#media)) and are pinned to `november`
 with a `kubernetes.io/hostname` nodeSelector, so they keep running next to the disk if more nodes are added.
+
+### Backups
+
+The `backup` app is a CronJob that runs nightly at 03:00 (Asia/Kuala_Lumpur) and uploads to a Backblaze B2 bucket:
+
+| B2 path | Source | Notes |
+|---|---|---|
+| `sqlite/` | SQLite databases under `/mnt/fast/k8s` | consistent snapshots taken with SQLite's online backup API (init container) |
+| `config/` | `/mnt/fast/k8s` (all app config volumes) | live database files excluded |
+| `media/` | `/mnt/bulk/media` | `downloads/incomplete/` excluded |
+
+- The bucket keeps prior versions of changed or deleted files for 30 days (a bucket lifecycle rule).
+- The source folders are read-only `hostPath`s with `type: Directory`, so the job can't start if a disk isn't mounted;
+  `--max-delete 500` fails a sync that would delete more than that.
+- Uploads are capped at 20 MB/s (`BWLIMIT` in `cronjob.yaml`); runs never overlap (`concurrencyPolicy: Forbid`).
+- A failed run sends an ntfy alert with the end of its log, and stays visible as a failed Job.
+- The B2 key, bucket and ntfy topic are in the `backup` Secret, created by `bootstrap.yaml` from hidden prompts.
+
+Run a backup now with `kubectl -n backup create job --from=cronjob/backup backup-manual` and follow it with
+`kubectl -n backup logs -f job/backup-manual -c backup`.
+
+To restore after a rebuild, before syncing the apps that use the data (rclone from any machine, with the same B2 key):
+
+```
+rclone copy b2:<bucket>/config /mnt/fast/k8s
+rclone copy b2:<bucket>/sqlite /mnt/fast/k8s   # puts the consistent database snapshots in place
+rclone copy b2:<bucket>/media /mnt/bulk/media
+sudo chown -R 1000:1000 /mnt/bulk/media
+```
+
+local-path-provisioner reuses the restored `<namespace>/<pvc>/` folders when the PVCs are recreated.
 
 ### Media
 
