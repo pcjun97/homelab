@@ -1,0 +1,14 @@
+#!/bin/bash
+# Managed by Ansible. Warn when a filesystem is above the threshold.
+set -euo pipefail
+threshold={{ alerts_disk_threshold }}
+report=""
+for path in {{ alerts_disk_paths | join(' ') }}; do
+  used=$(df --output=pcent "$path" | tail -1 | tr -dc '0-9')
+  if [ "$used" -ge "$threshold" ]; then
+    report+="${path} is ${used}% full"$'\n'
+  fi
+done
+if [ -n "$report" ]; then
+  homelab-notify "Disk space above ${threshold}%" "$report" 4 floppy_disk
+fi

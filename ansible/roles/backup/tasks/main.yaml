@@ -1,0 +1,78 @@
+- name: Install rclone and sqlite3
+  ansible.builtin.apt:
+    name:
+      - rclone
+      - sqlite3
+    state: present
+
+- name: Create the rclone config directory
+  ansible.builtin.file:
+    path: "{{ backup_rclone_config | dirname }}"
+    state: directory
+    mode: "0700"
+
+- name: Check for the B2 credentials and bucket
+  ansible.builtin.stat:
+    path: "{{ item }}"
+  loop:
+    - "{{ backup_rclone_config }}"
+    - "{{ backup_env }}"
+  register: backup_secret_files
+
+- name: Store the B2 credentials and bucket
+  when: not (backup_secret_files.results | map(attribute='stat.exists') | min)
+  block:
+    - name: Prompt for the B2 application key ID
+      ansible.builtin.pause:
+        prompt: B2 application key ID
+      register: backup_b2_key_id
+
+    - name: Prompt for the B2 application key
+      ansible.builtin.pause:
+        prompt: B2 application key (hidden)
+        echo: false
+      register: backup_b2_app_key
+      no_log: true
+
+    - name: Prompt for the B2 bucket name
+      ansible.builtin.pause:
+        prompt: B2 bucket name
+      register: backup_b2_bucket
+
+    - name: Write the rclone config
+      ansible.builtin.template:
+        src: rclone.conf.j2
+        dest: "{{ backup_rclone_config }}"
+        mode: "0600"
+      no_log: true
+
+    - name: Write the bucket name
+      ansible.builtin.copy:
+        content: "BACKUP_BUCKET={{ backup_b2_bucket.user_input | quote }}\n"
+        dest: "{{ backup_env }}"
+        mode: "0600"
+
+- name: Install the backup script
+  ansible.builtin.template:
+    src: homelab-backup.j2
+    dest: /usr/local/bin/homelab-backup
+    mode: "0755"
+
+- name: Install the backup service and timer
+  ansible.builtin.template:
+    src: "{{ item }}.j2"
+    dest: /etc/systemd/system/{{ item }}
+    mode: "0644"
+  loop:
+    - homelab-backup.service
+    - homelab-backup.timer
+  notify: Reload systemd for backups
+
+- name: Reload systemd before enabling the backup timer
+  ansible.builtin.meta: flush_handlers
+
+- name: Enable the backup timer
+  ansible.builtin.systemd_service:
+    name: homelab-backup.timer
+    enabled: true
+    state: started

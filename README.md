@@ -27,6 +27,8 @@ The operating system of choice is Debian 13 (trixie), with [tailscale](https://t
 The rest of the host is set up with Ansible (`ansible/`), which installs:
 
 - smartd (SMART monitoring with a daily short and weekly long self-test), weekly TRIM for the SSD, and a 256M journal limit
+- push alerts through [ntfy](https://ntfy.sh) for SMART problems, failed backups and disks above 90%
+- a nightly backup of app config and media to Backblaze B2 with rclone
 - the NVIDIA driver from Debian's `non-free` (the 550 branch, which still supports Pascal GPUs) and the
   [NVIDIA container toolkit](https://github.com/NVIDIA/nvidia-container-toolkit), which k3s detects as the `nvidia` runtime
 - a single-node [k3s](https://docs.k3s.io/) cluster, with the following optional addons disabled:
@@ -167,6 +169,37 @@ enabled so transcodes fit in the 6Gi RAM volume. Hardware decoding is enabled fo
 ([NVIDIA support matrix](https://developer.nvidia.com/video-encode-decode-support-matrix)): H264, HEVC, HEVC 10bit, MPEG2, MPEG4,
 VC1 and VP9. VP8, VP9 10bit, HEVC RExt and AV1 stay off (VP9 10bit is listed as unsupported for one 1050 Ti revision); those
 formats are decoded on the CPU. HEVC encoding is allowed.
+
+### Backups and alerts
+
+`homelab-backup.timer` runs `/usr/local/bin/homelab-backup` every night at 03:00, uploading to a Backblaze B2 bucket with rclone:
+
+| B2 path | Source | Notes |
+|---|---|---|
+| `sqlite/` | SQLite databases under `/mnt/fast/k8s` | consistent snapshots taken with `sqlite3 .backup` |
+| `config/` | `/mnt/fast/k8s` (all app config volumes) | live database files excluded |
+| `media/` | `/mnt/bulk/media` | `downloads/incomplete/` excluded |
+
+- The bucket keeps prior versions of changed or deleted files for 30 days (a bucket lifecycle rule).
+- The run stops if `/mnt/fast` or `/mnt/bulk` isn't mounted, and `--max-delete 500` stops a sync that would delete more than that.
+- Uploads are capped at 20 MB/s (`backup_bwlimit`).
+- The B2 key, bucket name and ntfy topic live only on the host (`/etc/rclone/rclone.conf`, `/etc/homelab/*.env`, root-only);
+  `site.yaml` prompts for them when they're missing.
+- A failed run sends an ntfy alert with the end of its log (`homelab-notify-failure@.service`), as do smartd and the daily
+  disk space check.
+
+Run a backup by hand with `sudo systemctl start homelab-backup` and follow it with `journalctl -fu homelab-backup`.
+
+To restore after a rebuild (before syncing the apps that use the data):
+
+```
+sudo rclone copy b2:<bucket>/config /mnt/fast/k8s --config /etc/rclone/rclone.conf
+sudo rclone copy b2:<bucket>/sqlite /mnt/fast/k8s --config /etc/rclone/rclone.conf   # puts the consistent snapshots in place
+sudo rclone copy b2:<bucket>/media /mnt/bulk/media --config /etc/rclone/rclone.conf
+sudo chown -R 1000:1000 /mnt/bulk/media
+```
+
+local-path-provisioner reuses the restored `<namespace>/<pvc>/` folders when the PVCs are recreated.
 
 ### Remote kubectl
 

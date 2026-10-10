@@ -1,0 +1,10 @@
+# Managed by Ansible.
+[Unit]
+Description=Daily disk space check
+
+[Timer]
+OnCalendar={{ alerts_disk_schedule }}
+Persistent=true
+
+[Install]
+WantedBy=timers.target
