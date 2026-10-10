@@ -41,7 +41,8 @@ The rest of the host is set up with Ansible (`ansible/`), which installs:
 
 Third-party apps/services:
 
-- [argo-cd](https://argoproj.github.io/cd://argoproj.github.io/cd/)
+- [argo-cd](https://argoproj.github.io/cd/)
+- [filebrowser quantum](https://github.com/gtsteffaniak/filebrowser) (web file manager for media, at `https://files.<tailnet>.ts.net`)
 - [jellyfin](https://jellyfin.org/)
 - [local-path-provisioner](https://github.com/rancher/local-path-provisioner)
 - [metrics-server](https://github.com/kubernetes-sigs/metrics-server)
@@ -120,7 +121,7 @@ with a `kubernetes.io/hostname` nodeSelector, so they keep running next to the d
 
 ### Media
 
-Media lives at `/mnt/bulk/media` on the host, mounted at `/data/media` in jellyfin and qbittorrent as a `hostPath` volume. It's split into one folder per
+Media lives at `/mnt/bulk/media` on the host, mounted at `/data/media` in jellyfin, qbittorrent and filebrowser as a `hostPath` volume. It's split into one folder per
 Jellyfin library. Japanese content has its own libraries because the metadata language is set per library. Documentaries go
 under `movies` or `tv` (or their `-jp` counterparts).
 The folders are created by the `media` Ansible role, owned by the homelab user (UID 1000, which all apps run as).
