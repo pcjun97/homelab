@@ -44,6 +44,7 @@ Notes and decisions from planning the rebuild of `november`, the single homelab 
 | PR workflow | Small PRs based on `main`, squash-merged. Stack only when a PR depends on another, and rebase onto `main` after the lower one merges. Nothing is applied or run until its PR is open and reviewed | Easier review; squash merges leave stacked branches with duplicate commits |
 | Backups | Configs and media both go offsite to **Backblaze B2**; migrate to a Hetzner Storage Box if B2 costs more than expected | The lesson from this failure. B2: nicer UX, bucket-scoped keys, charged on what you store |
 | Backup tool | `rclone sync` from the host (systemd timer installed by Ansible) of `/mnt/fast` and `/mnt/bulk` to B2. The bucket lifecycle keeps old file versions for 30 days. No encryption, no Object Lock | Simplest option: files stay plain and browsable in B2. Versions cover accidental deletion, a bad upgrade, and a failing disk uploading corrupted files. Locks only protect against an attacker; low risk with Tailscale-only access. kopia/restic were considered: little benefit for media that doesn't dedupe |
+| Host secrets | The ntfy topic for host alerts is stored only on the host in a root-only file; `site.yaml` prompts for it (hidden) when it's missing, and it's kept in the password manager for rebuilds | Keeps "no secrets in git" without ansible-vault and another password to manage |
 | Alerts | **healthchecks.io**: a backup-job check (pings on start, success and failure; alerts on failure or a missing ping) and a **heartbeat** check (a systemd timer pings every 5 min; grace 15 min; sends down and up alerts). **ntfy.sh** push (long random topic) for `smartd` problems and disk space above 90% on `/mnt/fast` and `/mnt/bulk`. healthchecks.io forwards to the same ntfy topic | A dead server can't report itself, so an outside check is needed; the heartbeat catches a dead or offline host within ~20 min instead of a day. Silence when healthy; everything arrives as phone push. Telegram and email were considered |
 
 ## Open items
@@ -115,11 +116,11 @@ Notes and decisions from planning the rebuild of `november`, the single homelab 
 - [ ] CI workflow (render all apps, ansible-lint) as a required check
 - [ ] Renovate config (automerge patch/minor, majors via Dependency Dashboard approval, weekly schedule,
       custom rule for the k3s version in Ansible, versioning rule for linuxserver tags); clean up the stale `renovate/*` branches
-- [ ] Ansible: smartd, `fstrim.timer` and a journald size limit (container logs are already capped by the kubelet at 10Mi × 5)
-- [ ] Create the B2 bucket (lifecycle: keep prior versions 30 days) and a bucket-scoped application key
-- [ ] rclone backup job: Ansible role + systemd timer
-- [ ] Alerts: create the ntfy topic and the healthchecks.io checks (backup + heartbeat, forwarding to ntfy); Ansible sets up smartd
-      (alerts through ntfy), a daily disk-space check, healthchecks pings in the backup job, and the heartbeat timer
+- [ ] Run `site.yaml` with the ntfy topic and send a test alert (`sudo homelab-notify "Test" "Hello"`)
+- [ ] Backups as a CronJob app (rclone to B2), with the Secret created by `bootstrap.yaml`
+- [ ] healthchecks.io: create the backup and heartbeat checks (forwarding to ntfy); add pings to the backup job and a
+      heartbeat timer
+- [ ] After the first backup: test a restore of one file and of a SQLite snapshot from B2
 - [ ] Optional: keep the Tailscale policy file in the repo and sync it with Tailscale's GitHub Action
 - [ ] Later: automate downloads with Sonarr (TV, Japanese TV, anime), Radarr (movies, Japanese movies) and Prowlarr. Prowlarr
       supports the sources in use: Nyaa (built in; Sonarr's Anime series type handles absolute numbering), AvistaZ (built in,

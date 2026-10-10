@@ -1,0 +1,8 @@
+# Managed by Ansible.
+[Unit]
+Description=Check disk space
+OnFailure=homelab-notify-failure@%n.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/homelab-diskspace

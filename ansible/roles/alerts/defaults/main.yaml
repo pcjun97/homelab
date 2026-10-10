@@ -1,0 +1,10 @@
+# ntfy topic, kept on the host only (anyone who knows it can read and post to it).
+alerts_ntfy_env: /etc/homelab/ntfy.env
+alerts_ntfy_server: https://ntfy.sh
+# Daily disk space check
+alerts_disk_paths:
+  - /
+  - /mnt/fast
+  - /mnt/bulk
+alerts_disk_threshold: 90
+alerts_disk_schedule: "*-*-* 09:00:00"

@@ -3,6 +3,7 @@
   become: true
   roles:
     - host
+    - alerts
     - smartd
     - media
     - nvidia
