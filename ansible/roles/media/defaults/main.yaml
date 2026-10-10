@@ -1,8 +1,7 @@
 # Disk that must be mounted before creating folders, so they never land on the root filesystem.
 media_mount: /mnt/bulk
-# Folder of the default/media PVC, created by local-path-provisioner with pathPattern <namespace>/<pvc>/.
-# Creating it here first is safe: the provisioner reuses an existing folder.
-media_root: /mnt/bulk/k8s/default/media
+# Mounted into jellyfin and qbittorrent as a hostPath volume (type Directory, so it must exist before they start).
+media_root: /mnt/bulk/media
 media_folders:
   - movies
   - movies-jp

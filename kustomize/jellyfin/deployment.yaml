@@ -16,6 +16,9 @@ spec:
       labels:
         app.kubernetes.io/name: jellyfin
     spec:
+      # Media is a hostPath on this node's HDD, and the GPU is here too
+      nodeSelector:
+        kubernetes.io/hostname: november
       runtimeClassName: nvidia
       securityContext:
         runAsUser: 1000
@@ -37,8 +40,10 @@ spec:
               name: cache
       volumes:
         - name: media
-          persistentVolumeClaim:
-            claimName: media
+          hostPath:
+            # Created by the media Ansible role; pods fail to start if it's missing
+            path: /mnt/bulk/media
+            type: Directory
         - name: config
           persistentVolumeClaim:
             claimName: jellyfin-config

@@ -31,7 +31,8 @@ Notes and decisions from planning the rebuild of `november`, the single homelab 
 | Ingress | Drop ingress-nginx; use the Tailscale operator's `tailscale` ingress class | ingress-nginx was retired in March 2026. Each service gets `https://<name>.<tailnet>.ts.net` |
 | Domain | Give up `chijun.website`, which also drops cert-manager and external-dns. Use full `*.<tailnet>.ts.net` names with bookmarks | Nothing needs access without Tailscale. Short MagicDNS names can't have valid HTTPS (certificates cover only the full ts.net name; the operator's `tailscale.com/http-redirect` keeps the typed host). Keeping a custom domain would need a Gateway API proxy (Envoy Gateway or Traefik) behind a Tailscale LoadBalancer, plus cert-manager with a Cloudflare token and a wildcard DNS record; not worth it for a few apps |
 | Storage | Run local-path-provisioner through Argo (k3s `--disable local-storage`). Two StorageClasses: `local-fast` → `/mnt/fast`, `local-bulk` → `/mnt/bulk`. `reclaimPolicy: Retain`; `pathPattern` `{{ .PVC.Namespace }}/{{ .PVC.Name }}` so folder names stay the same across rebuilds | One node, so Longhorn added risk without adding redundancy. Running it ourselves keeps its config and upgrades in git (k3s rewrites the bundled copy's config on restart) and maps each class to its own disk. Stable folder names let restored backups be found |
-| File manager | FileBrowser Quantum, behind the Tailscale ingress, mounting the media PVC | Works most like a desktop file explorer. No need for SFTP; host SSH covers protocol access. The original FileBrowser was archived in 2026-09; copyparty was considered (more popular, plainer UI). Known issue: slow on folders with ~10k subfolders |
+| Media volume | Apps mount `/mnt/bulk/media` directly as a `hostPath` volume (`type: Directory`); the folder and library subfolders are created by the `media` Ansible role. Replaces the `media` PVC on `local-bulk` | A plain host path is easier to reach over SSH, back up and browse than `/mnt/bulk/k8s/default/media`. On one node, `hostPath` is simpler than a static PV/PVC; the path is repeated in each app that mounts it. Apps that mount it are pinned with `nodeSelector: kubernetes.io/hostname: november` (a node label would only pay off with several media or GPU nodes) |
+| File manager | FileBrowser Quantum, behind the Tailscale ingress, mounting `/mnt/bulk/media` | Works most like a desktop file explorer. No need for SFTP; host SSH covers protocol access. The original FileBrowser was archived in 2026-09; copyparty was considered (more popular, plainer UI). Known issue: slow on folders with ~10k subfolders |
 | `media-storage` pod | Drop it; SSH/SFTP to the host directly | Media is a host folder and the host is on the tailnet |
 | Secrets | Drop sops/ksops. The only secret, the Tailscale operator OAuth client, is created by `ansible/bootstrap.yaml` from a hidden prompt (never in git, shell history or process arguments) | It's the only secret left; removes the fragile Argo repo-server plugin setup |
 | Argo sync | Keep manual sync; no automated sync, prune or selfHeal | User preference |
@@ -70,7 +71,7 @@ Notes and decisions from planning the rebuild of `november`, the single homelab 
 - [x] Dropped apps removed (#145); Tailscale ingress for argocd, jellyfin and qbittorrent (#149)
 - [x] sops/ksops and all encrypted secrets removed; `media-storage` sidecar removed (#152)
 - [x] `local-path-provisioner` (pinned `v0.0.37`) with `local-fast` (default, `/mnt/fast/k8s`) and `local-bulk` (`/mnt/bulk/k8s`),
-      both `Retain`, folders `<namespace>/<pvc>/`; shared `media` PVC replaces `media-storage` (#153)
+      both `Retain`, folders `<namespace>/<pvc>/`; shared `media` PVC replaces `media-storage` (#153; later replaced by a `hostPath`)
 - [x] Platform charts bumped: argo-cd 10.9.6, tailscale-operator 1.102.4, metrics-server 3.14.0, nvidia-device-plugin 0.20.1 (#156)
 - [x] Ansible `site.yaml`: k3s v1.36.5+k3s1 (traefik, servicelb, local-storage, metrics-server, helm-controller disabled),
       storage folders, kubeconfig, `KUBECONFIG` in `~/.bashrc`, helm via Homebrew (#157, #158)
@@ -100,7 +101,7 @@ Notes and decisions from planning the rebuild of `november`, the single homelab 
 ### To do
 
 - [ ] Argo CD: change the `admin` password and delete `argocd-initial-admin-secret`
-- [ ] FileBrowser Quantum `1.5.6-stable` at `files.tailbc93b.ts.net`, mounting `media`, data on `local-fast`
+- [ ] FileBrowser Quantum `1.5.6-stable` at `files.tailbc93b.ts.net`, mounting `/mnt/bulk/media` as a `hostPath` and pinned to `november`, data on `local-fast`
       (change the default `admin`/`admin` password on first login)
 - [ ] CI workflow (render all apps, ansible-lint) as a required check
 - [ ] Renovate config (automerge patch/minor, majors via Dependency Dashboard approval, weekly schedule,

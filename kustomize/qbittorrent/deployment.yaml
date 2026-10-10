@@ -16,6 +16,9 @@ spec:
       labels:
         app.kubernetes.io/name: qbittorrent
     spec:
+      # Media is a hostPath on this node's HDD
+      nodeSelector:
+        kubernetes.io/hostname: november
       containers:
         - name: qbittorrent
           image: "linuxserver/qbittorrent"
@@ -34,8 +37,10 @@ spec:
               name: config
       volumes:
         - name: media
-          persistentVolumeClaim:
-            claimName: media
+          hostPath:
+            # Created by the media Ansible role; pods fail to start if it's missing
+            path: /mnt/bulk/media
+            type: Directory
         - name: config
           persistentVolumeClaim:
             claimName: qbittorent-config
