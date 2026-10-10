@@ -119,6 +119,7 @@ Volumes are provisioned by local-path-provisioner into `<disk>/k8s/<namespace>/<
 
 The shared `media` volume (`/data/media` in the pods, `/mnt/bulk/k8s/default/media` on the host) is split into one folder per
 Jellyfin library. Japanese content has its own libraries because the metadata language is set per library.
+The folders are created by the `media` Ansible role, owned by the homelab user (UID 1000, which all apps run as).
 
 | Folder | Jellyfin library | Type | Metadata language / country |
 |---|---|---|---|
@@ -136,7 +137,10 @@ Playback languages are per user: preferred audio language English, "Play default
 subtitle mode Smart with English subtitles, so Japanese audio plays with English subtitles and English audio without.
 
 In Jellyfin's transcoding settings, hardware acceleration is NVIDIA NVENC, and **Throttle transcodes** and **Delete segments** are
-enabled so transcodes fit in the 6Gi RAM volume.
+enabled so transcodes fit in the 6Gi RAM volume. Hardware decoding is enabled for what the GTX 1050 Ti's NVDEC supports
+([NVIDIA support matrix](https://developer.nvidia.com/video-encode-decode-support-matrix)): H264, HEVC, HEVC 10bit, MPEG2, MPEG4,
+VC1 and VP9. VP8, VP9 10bit, HEVC RExt and AV1 stay off (VP9 10bit is listed as unsupported for one 1050 Ti revision); those
+formats are decoded on the CPU. HEVC encoding is allowed.
 
 ### Remote kubectl
 

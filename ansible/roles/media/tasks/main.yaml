@@ -1,0 +1,21 @@
+- name: Check that the media disk is mounted
+  ansible.builtin.assert:
+    that: media_mount in ansible_facts.mounts | map(attribute='mount') | list
+    fail_msg: "{{ media_mount }} is not mounted; not creating media folders on the root filesystem"
+
+- name: Create the media root
+  ansible.builtin.file:
+    path: "{{ media_root }}"
+    state: directory
+    owner: "{{ homelab_user }}"
+    group: "{{ homelab_user }}"
+    mode: "0755"
+
+- name: Create the media library folders
+  ansible.builtin.file:
+    path: "{{ media_root }}/{{ item }}"
+    state: directory
+    owner: "{{ homelab_user }}"
+    group: "{{ homelab_user }}"
+    mode: "0755"
+  loop: "{{ media_folders }}"
