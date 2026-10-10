@@ -1,0 +1,5 @@
+# Managed by Ansible.
+# -a: monitor health, attributes, error and self-test logs
+# -o on / -S on: enable automatic offline testing and attribute autosave
+# -n standby,q: don't wake disks that are spun down
+DEVICESCAN -a -o on -S on -n standby,q -s {{ smartd_test_schedule }} -W {{ smartd_temperature }}

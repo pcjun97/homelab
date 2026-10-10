@@ -1,0 +1,18 @@
+- name: Enable weekly TRIM for the SSD
+  ansible.builtin.systemd_service:
+    name: fstrim.timer
+    enabled: true
+    state: started
+
+- name: Create journald drop-in directory
+  ansible.builtin.file:
+    path: /etc/systemd/journald.conf.d
+    state: directory
+    mode: "0755"
+
+- name: Limit journal size
+  ansible.builtin.copy:
+    src: journald-limits.conf
+    dest: /etc/systemd/journald.conf.d/10-limits.conf
+    mode: "0644"
+  notify: Restart journald

@@ -1,0 +1,4 @@
+# Short self-test daily at 02:00, long self-test on Saturdays at 03:00.
+smartd_test_schedule: (S/../.././02|L/../../6/03)
+# Report temperature changes of 4°C, log at 45°C, warn at 55°C.
+smartd_temperature: 4,45,55
