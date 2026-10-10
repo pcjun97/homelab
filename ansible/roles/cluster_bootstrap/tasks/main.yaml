@@ -1,6 +1,9 @@
 - name: Create the Tailscale operator OAuth secret
   ansible.builtin.import_tasks: tailscale_secret.yaml
 
+- name: Create the backup secret
+  ansible.builtin.import_tasks: backup_secret.yaml
+
 - name: Install Argo CD and the ApplicationSet
   ansible.builtin.import_tasks: argocd.yaml
 
