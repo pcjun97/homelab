@@ -1,0 +1,17 @@
+http:
+  port: 8080
+  # Only reachable through the Tailscale ingress proxy
+  trustProxyHeaders: true
+server:
+  cacheDir: /home/filebrowser/cache
+  sources:
+    - path: /data/media
+      name: media
+      config:
+        defaultEnabled: true
+        defaultPermissions:
+          view: true
+          download: true
+          modify: true
+          create: true
+          delete: true

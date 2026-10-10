@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: filebrowser
+  labels:
+    app.kubernetes.io/name: filebrowser
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: filebrowser
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: filebrowser
+    spec:
+      # Media is a hostPath on this node's HDD
+      nodeSelector:
+        kubernetes.io/hostname: november
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+      containers:
+        - name: filebrowser
+          image: "gtstef/filebrowser"
+          env:
+            - name: FILEBROWSER_CONFIG
+              value: /home/filebrowser/config/config.yaml
+          ports:
+            - containerPort: 8080
+              name: http
+          volumeMounts:
+            - mountPath: /data/media
+              name: media
+            - mountPath: /home/filebrowser/data
+              name: data
+            - mountPath: /home/filebrowser/config
+              name: config
+              readOnly: true
+            - mountPath: /home/filebrowser/cache
+              name: cache
+      volumes:
+        - name: media
+          hostPath:
+            # Created by the media Ansible role; pods fail to start if it's missing
+            path: /mnt/bulk/media
+            type: Directory
+        - name: data
+          persistentVolumeClaim:
+            claimName: filebrowser-data
+        - name: config
+          configMap:
+            name: filebrowser
+        - name: cache
+          emptyDir: {}
