@@ -24,9 +24,10 @@ GitOps config for a single-node k3s homelab on the host `november` (Debian 13), 
 - Pin chart versions and image tags; Renovate bumps them.
 - Ingress uses only the Tailscale operator (`ingressClassName: tailscale`), giving `https://<name>.tailbc93b.ts.net`.
   There is no nginx, cert-manager or public domain. The operator uses its default tags, `tag:k8s-operator` and `tag:k8s`.
-- Storage: `local-fast` (default, `/mnt/fast`, SSD) for app config and `local-bulk` (`/mnt/bulk`, HDD) for media, both from a
-  self-run local-path-provisioner with `Retain` and `<namespace>/<pvc>/` folders. Avoid write-heavy workloads on the SSD.
-- Apps sharing the `media` PVC run as UID/GID 1000. Apps with a config database use the `Recreate` strategy.
+- Storage: `local-fast` (default, `/mnt/fast`, SSD) for app config and `local-bulk` (`/mnt/bulk`, HDD) for large data, both from a
+  self-run local-path-provisioner with `Retain` and `<namespace>/<pvc>/` folders. Media is not a PVC: apps mount `/mnt/bulk/media`
+  as a `hostPath` volume (`type: Directory`), created by the `media` Ansible role. Avoid write-heavy workloads on the SSD.
+- Apps mounting media run as UID/GID 1000. Apps with a config database use the `Recreate` strategy.
 - There are no secrets in git.
 - Argo sync is manual on purpose: don't add automated sync, prune or selfHeal. Syncs use server-side apply.
 - Ansible: system packages from apt, CLI tools from Homebrew (as the user). Role variables are prefixed with the role name;

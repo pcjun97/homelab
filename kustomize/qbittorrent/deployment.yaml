@@ -34,8 +34,10 @@ spec:
               name: config
       volumes:
         - name: media
-          persistentVolumeClaim:
-            claimName: media
+          hostPath:
+            # Created by the media Ansible role; pods fail to start if it's missing
+            path: /mnt/bulk/media
+            type: Directory
         - name: config
           persistentVolumeClaim:
             claimName: qbittorent-config

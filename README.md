@@ -113,11 +113,13 @@ MagicDNS and HTTPS must be enabled for the tailnet.
 Volumes are provisioned by local-path-provisioner into `<disk>/k8s/<namespace>/<pvc>/`, with `reclaimPolicy: Retain`:
 
 - `local-fast` (default): `/mnt/fast` on the SSD, for app config
-- `local-bulk`: `/mnt/bulk` on the HDD, for media (the `media` PVC shared by jellyfin and qbittorrent)
+- `local-bulk`: `/mnt/bulk/k8s` on the HDD, for large app data
+
+Media isn't a PVC: apps mount `/mnt/bulk/media` directly as a `hostPath` volume (see [Media](#media)).
 
 ### Media
 
-The shared `media` volume (`/data/media` in the pods, `/mnt/bulk/k8s/default/media` on the host) is split into one folder per
+Media lives at `/mnt/bulk/media` on the host, mounted at `/data/media` in jellyfin and qbittorrent as a `hostPath` volume. It's split into one folder per
 Jellyfin library. Japanese content has its own libraries because the metadata language is set per library. Documentaries go
 under `movies` or `tv` (or their `-jp` counterparts).
 The folders are created by the `media` Ansible role, owned by the homelab user (UID 1000, which all apps run as).
