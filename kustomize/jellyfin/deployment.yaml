@@ -34,10 +34,11 @@ spec:
               name: media
             - mountPath: /config
               name: config
-            - mountPath: /config/transcodes
-              name: transcodes
             - mountPath: /cache
               name: cache
+            # Jellyfin's default transcode path is <cache>/transcodes; keep it in RAM, off the SSD
+            - mountPath: /cache/transcodes
+              name: transcodes
       volumes:
         - name: media
           hostPath:

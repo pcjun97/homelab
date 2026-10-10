@@ -82,7 +82,7 @@ Notes and decisions from planning the rebuild of `november`, the single homelab 
 - [x] Tailscale admin console: MagicDNS and HTTPS on, default tags in `tagOwners`, OAuth client with Devices Core, Auth Keys and Services
 
 - [x] NVIDIA role: Debian's 550 driver (NVIDIA's Debian 13 repository ships 590+, which dropped Pascal) and the container toolkit (#163)
-- [x] Jellyfin on the official image `jellyfin/jellyfin:12.2` (runs as 1000, transcodes in a 6Gi RAM volume at `/config/transcodes`),
+- [x] Jellyfin on the official image `jellyfin/jellyfin:12.2` (runs as 1000, transcodes in a 6Gi RAM volume at `/cache/transcodes`),
       qbittorrent 5.2.4 with `PUID`/`PGID=1000` (#164)
 - [x] **All apps running (2026-10-10):** nvidia, media, jellyfin and qbittorrent Synced and Healthy; NVENC available inside Jellyfin
 - [x] Media layout decided (one folder and library per category, Japanese metadata for Japanese content); see the README
@@ -100,6 +100,8 @@ Notes and decisions from planning the rebuild of `november`, the single homelab 
 
 ### Lessons from the first downloads
 
+- The official Jellyfin image's default transcode path is `<cache>/transcodes` (`/cache/transcodes`), not under `/config`:
+  the first real transcode wrote to the plain `/cache` emptyDir on the SSD until the RAM volume was moved there.
 - qbittorrent 5.2's web UI has no "Use subcategories" option (desktop only); "Use Category paths in Manual Mode" with a relative
   save path does the same job.
 - qbittorrent's torrent *name* is only a label; renaming the content folder is done in the Content tab.
