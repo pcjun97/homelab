@@ -118,7 +118,8 @@ Volumes are provisioned by local-path-provisioner into `<disk>/k8s/<namespace>/<
 ### Media
 
 The shared `media` volume (`/data/media` in the pods, `/mnt/bulk/k8s/default/media` on the host) is split into one folder per
-Jellyfin library. Japanese content has its own libraries because the metadata language is set per library.
+Jellyfin library. Japanese content has its own libraries because the metadata language is set per library. Documentaries go
+under `movies` or `tv` (or their `-jp` counterparts).
 The folders are created by the `media` Ansible role, owned by the homelab user (UID 1000, which all apps run as).
 
 | Folder | Jellyfin library | Type | Metadata language / country |
@@ -128,7 +129,6 @@ The folders are created by the `media` Ansible role, owned by the homelab user (
 | `tv` | TV Series | Shows | English / US |
 | `tv-jp` | Japanese TV Series | Shows | Japanese / Japan |
 | `anime` | Anime (series and films) | Shows | Japanese / Japan |
-| `documentaries` | Documentaries | Shows | English / US |
 
 qbittorrent saves to `downloads/`, keeps in-progress torrents in `downloads/incomplete/`, and has one category per library folder
 that saves finished torrents straight into it.
