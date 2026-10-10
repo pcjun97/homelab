@@ -123,9 +123,9 @@ Jellyfin library. Japanese content has its own libraries because the metadata la
 | Folder | Jellyfin library | Type | Metadata language / country |
 |---|---|---|---|
 | `movies` | Movies | Movies | English / US |
-| `movies-japanese` | Japanese Movies | Movies | Japanese / Japan |
+| `movies-jp` | Japanese Movies | Movies | Japanese / Japan |
 | `tv` | TV Series | Shows | English / US |
-| `tv-japanese` | Japanese TV Series | Shows | Japanese / Japan |
+| `tv-jp` | Japanese TV Series | Shows | Japanese / Japan |
 | `anime` | Anime (series and films) | Shows | Japanese / Japan |
 | `documentaries` | Documentaries | Shows | English / US |
 
