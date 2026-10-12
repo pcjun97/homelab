@@ -2,3 +2,4 @@ charts/
 
 secret.yaml
 secrets.yaml
+__pycache__/

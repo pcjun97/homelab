@@ -1,0 +1,20 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: backup
+
+resources:
+  - namespace.yaml
+  - cronjob.yaml
+
+configMapGenerator:
+  - name: backup-scripts
+    files:
+      - backup.sh
+      - snapshot.py
+
+images:
+  - name: rclone/rclone
+    newTag: "1.75.2"
+  - name: python
+    newTag: "3.14.8-alpine3.24"
