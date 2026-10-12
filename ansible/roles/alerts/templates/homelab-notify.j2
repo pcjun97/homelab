@@ -1,0 +1,12 @@
+#!/bin/bash
+# Managed by Ansible. Send a push notification through ntfy.
+# Usage: homelab-notify <title> <message> [priority 1-5] [tags]
+set -euo pipefail
+source {{ alerts_ntfy_env }}
+title="$1"; message="$2"; priority="${3:-3}"; tags="${4:-}"
+curl -fsS --max-time 30 --retry 3 \
+  -H "Title: [$(hostname)] ${title}" \
+  -H "Priority: ${priority}" \
+  -H "Tags: ${tags}" \
+  --data-binary "${message}" \
+  "{{ alerts_ntfy_server }}/${NTFY_TOPIC}" >/dev/null

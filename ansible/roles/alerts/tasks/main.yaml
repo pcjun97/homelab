@@ -1,0 +1,76 @@
+- name: Install curl
+  ansible.builtin.apt:
+    name: curl
+    state: present
+
+- name: Create /etc/homelab
+  ansible.builtin.file:
+    path: /etc/homelab
+    state: directory
+    mode: "0700"
+
+- name: Check for the ntfy topic
+  ansible.builtin.stat:
+    path: "{{ alerts_ntfy_env }}"
+  register: alerts_ntfy_env_file
+
+- name: Store the ntfy topic
+  when: not alerts_ntfy_env_file.stat.exists
+  block:
+    - name: Prompt for the ntfy topic
+      ansible.builtin.pause:
+        prompt: ntfy topic (hidden)
+        echo: false
+      register: alerts_ntfy_topic
+      no_log: true
+
+    - name: Write the ntfy topic
+      ansible.builtin.copy:
+        content: "NTFY_TOPIC={{ alerts_ntfy_topic.user_input | quote }}\n"
+        dest: "{{ alerts_ntfy_env }}"
+        mode: "0600"
+      no_log: true
+
+- name: Install the notification scripts
+  ansible.builtin.template:
+    src: "{{ item }}.j2"
+    dest: /usr/local/bin/{{ item }}
+    mode: "0755"
+  loop:
+    - homelab-notify
+    - homelab-diskspace
+
+- name: Install the failure and smartd hooks
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: /usr/local/bin/{{ item }}
+    mode: "0755"
+  loop:
+    - homelab-unit-failed
+    - smartd-ntfy
+
+- name: Install the systemd units
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: /etc/systemd/system/{{ item }}
+    mode: "0644"
+  loop:
+    - homelab-notify-failure@.service
+    - homelab-diskspace.service
+  notify: Reload systemd
+
+- name: Install the disk space timer
+  ansible.builtin.template:
+    src: homelab-diskspace.timer.j2
+    dest: /etc/systemd/system/homelab-diskspace.timer
+    mode: "0644"
+  notify: Reload systemd
+
+- name: Reload systemd before enabling timers
+  ansible.builtin.meta: flush_handlers
+
+- name: Enable the disk space timer
+  ansible.builtin.systemd_service:
+    name: homelab-diskspace.timer
+    enabled: true
+    state: started

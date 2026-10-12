@@ -1,0 +1,7 @@
+# Managed by Ansible. Add OnFailure=homelab-notify-failure@%n.service to a unit to get a push alert when it fails.
+[Unit]
+Description=Send a failure notification for %i
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/homelab-unit-failed %i

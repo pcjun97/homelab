@@ -1,0 +1,5 @@
+#!/bin/bash
+# Managed by Ansible. smartd runs this (-M exec) instead of sending mail.
+set -euo pipefail
+homelab-notify "SMART: ${SMARTD_FAILTYPE:-warning} on ${SMARTD_DEVICE:-disk}" \
+  "${SMARTD_FULLMESSAGE:-${SMARTD_MESSAGE:-smartd reported a problem}}" 5 warning

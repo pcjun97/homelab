@@ -1,0 +1,6 @@
+#!/bin/bash
+# Managed by Ansible. Called by homelab-notify-failure@.service for a failed unit.
+set -euo pipefail
+unit="$1"
+log="$(journalctl -u "$unit" -n 20 --no-pager -o cat 2>&1 | tail -c 3500)"
+homelab-notify "${unit} failed" "${log}" 5 rotating_light
