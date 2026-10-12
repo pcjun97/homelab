@@ -35,12 +35,12 @@ def main():
                     continue
             dest = os.path.join(DEST, os.path.relpath(path, SOURCE))
             os.makedirs(os.path.dirname(dest), exist_ok=True)
+            print(f"snapshot: {path}", flush=True)
             source_db = sqlite3.connect(f"file:{path}?mode=ro", uri=True)
             dest_db = sqlite3.connect(dest)
             source_db.backup(dest_db)
             dest_db.close()
             source_db.close()
-            print(f"snapshot: {path}")
 
 
 try:
