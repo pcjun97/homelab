@@ -23,6 +23,11 @@ spec:
             - name: snapshot
               image: python
               command: ["python3", "/scripts/snapshot.py"]
+              # Opening a WAL database creates its -shm file if it's missing, so this needs a writable mount and the apps'
+              # UID, so the files it creates stay usable by the apps
+              securityContext:
+                runAsUser: 1000
+                runAsGroup: 1000
               env:
                 - name: NTFY_TOPIC
                   valueFrom:
@@ -32,7 +37,6 @@ spec:
               volumeMounts:
                 - mountPath: /source/config
                   name: config
-                  readOnly: true
                 - mountPath: /snapshots
                   name: snapshots
                 - mountPath: /scripts
