@@ -3,4 +3,12 @@
   connection: local
   gather_facts: false
   roles:
+    - role: secrets
+      secrets_required:
+        - tailscale_client_id
+        - tailscale_client_secret
+        - b2_key_id
+        - b2_application_key
+        - b2_bucket
+        - healthchecks_backup_url
     - cluster_bootstrap

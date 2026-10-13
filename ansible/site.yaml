@@ -2,6 +2,10 @@
   hosts: november
   become: true
   roles:
+    - role: secrets
+      secrets_required:
+        - ntfy_topic
+        - healthchecks_heartbeat_url
     - host
     - alerts
     - smartd

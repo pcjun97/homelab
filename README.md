@@ -54,7 +54,8 @@ Third-party apps/services:
 ## Tools
 
 - GitOps solution of choice is combination of [kustomize](https://kubectl.docs.kubernetes.io/references/kustomize/) and [argo-cd](https://argo-cd.readthedocs.io/en/stable/)
-- No secrets are stored in git. The Tailscale operator OAuth secret is created by hand (see [Bootstrap](#bootstrap)).
+- No secrets are stored in git. They live in `~/.config/homelab/secrets.yaml` (0600) on the machine running Ansible (see
+  [Secrets](#secrets)).
 
 ## Bootstrap
 
@@ -87,14 +88,14 @@ Third-party apps/services:
    sudo apt install ansible
    cd ansible && ansible-playbook site.yaml --ask-become-pass
    ```
+   It prompts for the ntfy topic and the heartbeat ping URL if they aren't in the [secrets file](#secrets) yet.
 3. Bootstrap the cluster from the host (no sudo needed; `kubectl` and `helm` must be on the `PATH`):
    ```
    cd ansible && ansible-playbook bootstrap.yaml
    ```
    The playbook skips any step that's already done:
-   - prompts for the Tailscale OAuth client ID and secret (the secret is hidden and never logged)
-     and creates the `operator-oauth` secret
-   - prompts for the B2 key, bucket and the backup check's healthchecks.io ping URL and creates the `backup` secret
+   - prompts for any of the Tailscale OAuth client, B2 key and bucket, and backup ping URL missing from the
+     [secrets file](#secrets), then applies the `operator-oauth` and `backup` secrets from it (on every run)
    - installs Argo CD and the ApplicationSet, which creates one application per directory under `kustomize/`
    - syncs `local-path-provisioner`, `tailscale`, `metrics-server`, `argocd` and `homelab` in order, waiting for each to
      become healthy. Only applications that have never been synced are synced, so re-running it never forces a sync.
@@ -138,7 +139,7 @@ The `backup` app is a CronJob that runs nightly at 03:00 (Asia/Kuala_Lumpur) and
 - Each run pings the `backup` check on [healthchecks.io](https://healthchecks.io) when it starts, succeeds or fails
   (with the end of its log), and healthchecks.io alerts through ntfy when a run fails or none succeeds in time.
   A failed run also stays visible as a failed Job.
-- The B2 key, bucket and ping URL are in the `backup` Secret, created by `bootstrap.yaml` from hidden prompts.
+- The B2 key, bucket and ping URL are in the `backup` Secret, applied by `bootstrap.yaml` from the [secrets file](#secrets).
 
 Run a backup now with `kubectl -n backup create job --from=cronjob/backup backup-manual` and follow it with
 `kubectl -n backup logs -f job/backup-manual -c backup`.
@@ -211,8 +212,8 @@ Push notifications go to an [ntfy](https://ntfy.sh) topic through `/usr/local/bi
 - `homelab-diskspace.timer` checks `/`, `/mnt/fast` and `/mnt/bulk` daily at 09:00 and warns above 90%
 - any systemd unit with `OnFailure=homelab-notify-failure@%n.service` sends an alert with the end of its log when it fails
 
-The topic lives only on the host (`/etc/homelab/ntfy.env`, root-only), since anyone who knows it can read the alerts;
-`site.yaml` prompts for it when it's missing. Send a test with `sudo homelab-notify "Test" "Hello"`.
+The topic is written to `/etc/homelab/ntfy.env` (root-only) from the [secrets file](#secrets), since anyone who knows it
+can read the alerts. Send a test with `sudo homelab-notify "Test" "Hello"`.
 
 A dead or offline server can't send alerts, so [healthchecks.io](https://healthchecks.io) watches from outside and alerts
 through the same ntfy topic:
@@ -222,7 +223,22 @@ through the same ntfy topic:
 | `heartbeat` | `homelab-heartbeat.timer` on the host, every 5 minutes | 5 minutes / 15 minutes |
 | `backup` | the `backup` CronJob: start, success, or failure with the end of its log | 1 day / 8 hours |
 
-The heartbeat ping URL lives in `/etc/homelab/heartbeat.env` (root-only); `site.yaml` prompts for it when it's missing.
+The heartbeat ping URL is written to `/etc/homelab/heartbeat.env` (root-only) from the [secrets file](#secrets).
+
+### Secrets
+
+All secret values live in one file outside git, `~/.config/homelab/secrets.yaml` (mode 0600), on the machine that runs
+Ansible. Each playbook prompts (hidden) for any value it needs that's missing and saves it there, so each value is typed
+once. The cluster Secrets and the host's `/etc/homelab/*.env` files are rendered from it on every run: to change a value,
+edit the file and re-run the playbook.
+
+| Key | Used by |
+|---|---|
+| `tailscale_client_id`, `tailscale_client_secret` | `operator-oauth` Secret (`bootstrap.yaml`) |
+| `b2_key_id`, `b2_application_key`, `b2_bucket`, `healthchecks_backup_url` | `backup` Secret (`bootstrap.yaml`) |
+| `ntfy_topic`, `healthchecks_heartbeat_url` | host alerts and heartbeat (`site.yaml`) |
+
+Keep a copy of the file in a password manager: after a rebuild, paste it back and neither playbook prompts.
 
 ### Remote kubectl
 
