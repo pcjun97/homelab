@@ -1,0 +1,9 @@
+# Managed by Ansible.
+[Unit]
+Description=Heartbeat to healthchecks.io
+
+[Timer]
+OnCalendar={{ alerts_heartbeat_schedule }}
+
+[Install]
+WantedBy=timers.target

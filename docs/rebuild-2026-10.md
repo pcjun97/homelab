@@ -45,7 +45,7 @@ Notes and decisions from planning the rebuild of `november`, the single homelab 
 | Backups | Configs and media both go offsite to **Backblaze B2**; migrate to a Hetzner Storage Box if B2 costs more than expected | The lesson from this failure. B2: nicer UX, bucket-scoped keys, charged on what you store |
 | Backup tool | A `backup` CronJob app (nightly 03:00 KL time): a Python init container takes SQLite online-backup snapshots, then the official `rclone/rclone` image syncs the snapshots, `/mnt/fast/k8s` and `/mnt/bulk/media` (read-only `hostPath`s) to B2. Bucket lifecycle keeps old versions 30 days; `--max-delete 500`; capped at 20M (a quarter of the TIME 600 plan's symmetric upload). Secrets in a `backup` Secret created by `bootstrap.yaml`. No encryption, no Object Lock | GitOps and Argo visibility like every other app, and a current rclone pinned and bumped by Renovate (Debian ships 1.60.1). A systemd timer was considered: it keeps running when k3s is down, but healthchecks.io's dead-man check covers that. Host monitoring (smartd, disk space) stays in Ansible |
 | Host secrets | The ntfy topic for host alerts is stored only on the host in a root-only file; `site.yaml` prompts for it (hidden) when it's missing, and it's kept in the password manager for rebuilds | Keeps "no secrets in git" without ansible-vault and another password to manage |
-| Alerts | **healthchecks.io**: a backup-job check (pings on start, success and failure; alerts on failure or a missing ping) and a **heartbeat** check (a systemd timer pings every 5 min; grace 15 min; sends down and up alerts). **ntfy.sh** push (long random topic) for `smartd` problems and disk space above 90% on `/mnt/fast` and `/mnt/bulk`. healthchecks.io forwards to the same ntfy topic | A dead server can't report itself, so an outside check is needed; the heartbeat catches a dead or offline host within ~20 min instead of a day. Silence when healthy; everything arrives as phone push. Telegram and email were considered |
+| Alerts | **healthchecks.io**: a backup-job check (pings on start, success and failure; alerts on failure or a missing ping; the job doesn't post to ntfy itself, so a failure gives one push) and a **heartbeat** check (a systemd timer pings every 5 min; grace 15 min; sends down and up alerts). **ntfy.sh** push (long random topic) for `smartd` problems and disk space above 90% on `/mnt/fast` and `/mnt/bulk`. healthchecks.io forwards to the same ntfy topic | A dead server can't report itself, so an outside check is needed; the heartbeat catches a dead or offline host within ~20 min instead of a day. The heartbeat is a host timer, not a CronJob: a CronJob every 5 min would also cover k3s but creates 288 pods a day of SSD writes; a down cluster is caught by the backup check (no 03:00 run) within a day. Silence when healthy; everything arrives as phone push. Telegram and email were considered |
 
 ## Open items
 
@@ -54,9 +54,6 @@ Notes and decisions from planning the rebuild of `november`, the single homelab 
   - Hetzner Storage Box: 1TB €3.20 (RM14.75), 5TB €10.90 (RM50.25), 10TB €20.80 (RM95.89), 20TB €40.60 (RM187.17)
   - At about 1TB B2 costs about RM11–14/month more. B2 is cheaper from 1TB to about 1.8TB, where Hetzner jumps
     to the 5TB box. Above 2TB, Hetzner is much cheaper. To migrate, use `rclone copy` between the providers.
-- **Jellyfin's SQLite database:** rclone copies files while they're in use, so a live database can be copied
-  half-written. Either stop Jellyfin briefly during the config sync, or copy a database backup file instead.
-  Decide when writing the backup job.
 
 ## Other improvements discussed
 
@@ -87,6 +84,10 @@ Notes and decisions from planning the rebuild of `november`, the single homelab 
       qbittorrent 5.2.4 with `PUID`/`PGID=1000` (#164)
 - [x] **All apps running (2026-10-10):** nvidia, media, jellyfin and qbittorrent Synced and Healthy; NVENC available inside Jellyfin
 - [x] Media layout decided (one folder and library per category, Japanese metadata for Japanese content); see the README
+- [x] Host ntfy alerts: smartd, disk space, failed units (#170)
+- [x] **Backups (2026-10-13):** nightly `backup` CronJob to B2 with SQLite snapshots (#171, #172); the first run uploaded
+      85 GiB in 2 hours. Restore test passed: config hashes match, both database snapshots pass `integrity_check`,
+      media sizes match
 
 ### Lessons from the MVP bring-up
 
@@ -98,6 +99,11 @@ Notes and decisions from planning the rebuild of `november`, the single homelab 
 - TRIM works on the SSD even with the SATA controller in IDE mode, and Debian enables `fstrim.timer` by default.
 - If ingresses get no address, check the operator logs: `requested tags [tag:k8s] are invalid or not permitted` means
   `tagOwners` doesn't let `tag:k8s-operator` own `tag:k8s`. The operator recovers by itself once the policy is fixed.
+
+### Lessons from the first backup
+
+- A WAL-mode SQLite database with no `-shm` file (the app is idle) can't be opened even read-only from a read-only
+  mount: SQLite has to create the `-shm` file. The snapshot container mounts the config read-write and runs as UID 1000.
 
 ### Lessons from the first downloads
 
@@ -117,10 +123,8 @@ Notes and decisions from planning the rebuild of `november`, the single homelab 
 - [ ] Renovate config (automerge patch/minor, majors via Dependency Dashboard approval, weekly schedule,
       custom rule for the k3s version in Ansible, versioning rule for linuxserver tags); clean up the stale `renovate/*` branches
 - [ ] Run `site.yaml` with the ntfy topic and send a test alert (`sudo homelab-notify "Test" "Hello"`)
-- [ ] Backups as a CronJob app (rclone to B2), with the Secret created by `bootstrap.yaml`
-- [ ] healthchecks.io: create the backup and heartbeat checks (forwarding to ntfy); add pings to the backup job and a
-      heartbeat timer
-- [ ] After the first backup: test a restore of one file and of a SQLite snapshot from B2
+- [ ] healthchecks.io: create the `backup` (1 day / 8 hours) and `heartbeat` (5 / 15 minutes) checks with the ntfy
+      integration, then run `site.yaml` and `bootstrap.yaml` (re-enter the B2 key: the `backup` Secret is recreated)
 - [ ] Optional: keep the Tailscale policy file in the repo and sync it with Tailscale's GitHub Action
 - [ ] Later: automate downloads with Sonarr (TV, Japanese TV, anime), Radarr (movies, Japanese movies) and Prowlarr. Prowlarr
       supports the sources in use: Nyaa (built in; Sonarr's Anime series type handles absolute numbering), AvistaZ (built in,

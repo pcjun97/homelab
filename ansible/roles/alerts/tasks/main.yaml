@@ -31,6 +31,28 @@
         mode: "0600"
       no_log: true
 
+- name: Check for the heartbeat ping URL
+  ansible.builtin.stat:
+    path: "{{ alerts_heartbeat_env }}"
+  register: alerts_heartbeat_env_file
+
+- name: Store the heartbeat ping URL
+  when: not alerts_heartbeat_env_file.stat.exists
+  block:
+    - name: Prompt for the heartbeat ping URL
+      ansible.builtin.pause:
+        prompt: healthchecks.io ping URL for the heartbeat check (hidden)
+        echo: false
+      register: alerts_heartbeat_url
+      no_log: true
+
+    - name: Write the heartbeat ping URL
+      ansible.builtin.copy:
+        content: "HEARTBEAT_URL={{ alerts_heartbeat_url.user_input | trim | quote }}\n"
+        dest: "{{ alerts_heartbeat_env }}"
+        mode: "0600"
+      no_log: true
+
 - name: Install the notification scripts
   ansible.builtin.template:
     src: "{{ item }}.j2"
@@ -59,18 +81,25 @@
     - homelab-diskspace.service
   notify: Reload systemd
 
-- name: Install the disk space timer
+- name: Install the templated systemd units
   ansible.builtin.template:
-    src: homelab-diskspace.timer.j2
-    dest: /etc/systemd/system/homelab-diskspace.timer
+    src: "{{ item }}.j2"
+    dest: /etc/systemd/system/{{ item }}
     mode: "0644"
+  loop:
+    - homelab-diskspace.timer
+    - homelab-heartbeat.service
+    - homelab-heartbeat.timer
   notify: Reload systemd
 
 - name: Reload systemd before enabling timers
   ansible.builtin.meta: flush_handlers
 
-- name: Enable the disk space timer
+- name: Enable the timers
   ansible.builtin.systemd_service:
-    name: homelab-diskspace.timer
+    name: "{{ item }}"
     enabled: true
     state: started
+  loop:
+    - homelab-diskspace.timer
+    - homelab-heartbeat.timer
