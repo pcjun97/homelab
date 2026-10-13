@@ -94,7 +94,7 @@ Third-party apps/services:
    The playbook skips any step that's already done:
    - prompts for the Tailscale OAuth client ID and secret (the secret is hidden and never logged)
      and creates the `operator-oauth` secret
-   - prompts for the B2 key, bucket and ntfy topic and creates the `backup` secret
+   - prompts for the B2 key, bucket and the backup check's healthchecks.io ping URL and creates the `backup` secret
    - installs Argo CD and the ApplicationSet, which creates one application per directory under `kustomize/`
    - syncs `local-path-provisioner`, `tailscale`, `metrics-server`, `argocd` and `homelab` in order, waiting for each to
      become healthy. Only applications that have never been synced are synced, so re-running it never forces a sync.
@@ -135,8 +135,10 @@ The `backup` app is a CronJob that runs nightly at 03:00 (Asia/Kuala_Lumpur) and
 - The source folders are read-only `hostPath`s with `type: Directory`, so the job can't start if a disk isn't mounted;
   `--max-delete 500` fails a sync that would delete more than that.
 - Uploads are capped at 20 MB/s (`BWLIMIT` in `cronjob.yaml`); runs never overlap (`concurrencyPolicy: Forbid`).
-- A failed run sends an ntfy alert with the end of its log, and stays visible as a failed Job.
-- The B2 key, bucket and ntfy topic are in the `backup` Secret, created by `bootstrap.yaml` from hidden prompts.
+- Each run pings the `backup` check on [healthchecks.io](https://healthchecks.io) when it starts, succeeds or fails
+  (with the end of its log), and healthchecks.io alerts through ntfy when a run fails or none succeeds in time.
+  A failed run also stays visible as a failed Job.
+- The B2 key, bucket and ping URL are in the `backup` Secret, created by `bootstrap.yaml` from hidden prompts.
 
 Run a backup now with `kubectl -n backup create job --from=cronjob/backup backup-manual` and follow it with
 `kubectl -n backup logs -f job/backup-manual -c backup`.
@@ -211,6 +213,16 @@ Push notifications go to an [ntfy](https://ntfy.sh) topic through `/usr/local/bi
 
 The topic lives only on the host (`/etc/homelab/ntfy.env`, root-only), since anyone who knows it can read the alerts;
 `site.yaml` prompts for it when it's missing. Send a test with `sudo homelab-notify "Test" "Hello"`.
+
+A dead or offline server can't send alerts, so [healthchecks.io](https://healthchecks.io) watches from outside and alerts
+through the same ntfy topic:
+
+| Check | Pinged by | Period / grace |
+|---|---|---|
+| `heartbeat` | `homelab-heartbeat.timer` on the host, every 5 minutes | 5 minutes / 15 minutes |
+| `backup` | the `backup` CronJob: start, success, or failure with the end of its log | 1 day / 8 hours |
+
+The heartbeat ping URL lives in `/etc/homelab/heartbeat.env` (root-only); `site.yaml` prompts for it when it's missing.
 
 ### Remote kubectl
 

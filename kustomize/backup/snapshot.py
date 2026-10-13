@@ -1,6 +1,7 @@
 """Take consistent snapshots of the SQLite databases under /source/config into /snapshots.
 
-Uses SQLite's online backup API, which is safe while the apps are writing.
+Uses SQLite's online backup API, which is safe while the apps are writing. As the first step of a run, it also
+sends the healthchecks.io start ping, so the check measures the whole run.
 """
 import os
 import sqlite3
@@ -12,16 +13,12 @@ SOURCE = "/source/config"
 DEST = "/snapshots"
 
 
-def notify(message):
-    request = urllib.request.Request(
-        f"https://ntfy.sh/{os.environ['NTFY_TOPIC']}",
-        data=message[-3500:].encode(),
-        headers={"Title": "[november] backup failed (snapshots)", "Priority": "5", "Tags": "rotating_light"},
-    )
+def ping(path, body=None):
+    url = os.environ["HEALTHCHECKS_URL"] + path
     try:
-        urllib.request.urlopen(request, timeout=30)
-    except Exception as error:  # the job still fails; this only loses the alert
-        print(f"could not send ntfy alert: {error}", file=sys.stderr)
+        urllib.request.urlopen(url, data=body and body.encode(), timeout=30)
+    except Exception as error:  # a missing success ping still raises an alert after the grace time
+        print(f"could not ping healthchecks.io: {error}", file=sys.stderr)
 
 
 def main():
@@ -43,8 +40,9 @@ def main():
             source_db.close()
 
 
+ping("/start")
 try:
     main()
 except Exception:
-    notify(traceback.format_exc())
+    ping("/fail", traceback.format_exc())
     raise

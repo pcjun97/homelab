@@ -1,0 +1,11 @@
+# Managed by Ansible. No OnFailure: a failed ping usually means the internet is down, so ntfy can't be reached either,
+# and healthchecks.io alerts once the pings stop.
+[Unit]
+Description=Ping the healthchecks.io heartbeat check
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+EnvironmentFile={{ alerts_heartbeat_env }}
+ExecStart=/usr/bin/curl -fsS --max-time 10 --retry 3 -o /dev/null ${HEARTBEAT_URL}

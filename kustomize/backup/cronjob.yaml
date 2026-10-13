@@ -29,11 +29,11 @@ spec:
                 runAsUser: 1000
                 runAsGroup: 1000
               env:
-                - name: NTFY_TOPIC
+                - name: HEALTHCHECKS_URL
                   valueFrom:
                     secretKeyRef:
                       name: backup
-                      key: ntfy_topic
+                      key: healthchecks_url
               volumeMounts:
                 - mountPath: /source/config
                   name: config
@@ -69,11 +69,11 @@ spec:
                     secretKeyRef:
                       name: backup
                       key: bucket
-                - name: NTFY_TOPIC
+                - name: HEALTHCHECKS_URL
                   valueFrom:
                     secretKeyRef:
                       name: backup
-                      key: ntfy_topic
+                      key: healthchecks_url
               volumeMounts:
                 - mountPath: /source/config
                   name: config

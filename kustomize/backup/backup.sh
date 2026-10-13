@@ -2,13 +2,14 @@
 # Sync the SQLite snapshots, the app config volumes and the media library to Backblaze B2.
 set -eu -o pipefail
 
-notify() {
-  wget -q -O /dev/null \
-    --header "Title: [november] backup failed" \
-    --header "Priority: 5" \
-    --header "Tags: rotating_light" \
-    --post-data "$1" \
-    "https://ntfy.sh/${NTFY_TOPIC}" || echo "could not send ntfy alert" >&2
+# Report to the healthchecks.io check (it alerts through ntfy). A failed ping only loses the report:
+# a missing success ping still raises an alert once the grace time runs out.
+ping() {
+  for _ in 1 2 3; do
+    wget -q -T 30 -O /dev/null --post-data "${2:-}" "${HEALTHCHECKS_URL}$1" && return 0
+    sleep 10
+  done
+  echo "could not ping healthchecks.io" >&2
 }
 
 rclone_sync() {
@@ -36,7 +37,8 @@ backup() {
 }
 
 if ! backup 2>&1 | tee /tmp/backup.log; then
-  notify "$(tail -c 3500 /tmp/backup.log)"
+  ping /fail "$(tail -c 10000 /tmp/backup.log)"
   exit 1
 fi
+ping ""
 echo "backup complete"
