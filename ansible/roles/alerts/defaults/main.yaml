@@ -1,4 +1,4 @@
-# ntfy topic, kept on the host only (anyone who knows it can read and post to it).
+# ntfy topic, written from the secrets file (anyone who knows it can read and post to it).
 alerts_ntfy_env: /etc/homelab/ntfy.env
 alerts_ntfy_server: https://ntfy.sh
 # Daily disk space check
@@ -8,6 +8,6 @@ alerts_disk_paths:
   - /mnt/bulk
 alerts_disk_threshold: 90
 alerts_disk_schedule: "*-*-* 09:00:00"
-# healthchecks.io ping URL of the heartbeat check, kept on the host only (anyone who knows it can ping it).
+# healthchecks.io ping URL of the heartbeat check, written from the secrets file.
 alerts_heartbeat_env: /etc/homelab/heartbeat.env
 alerts_heartbeat_schedule: "*:0/5"

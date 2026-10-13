@@ -29,7 +29,8 @@ GitOps config for a single-node k3s homelab on the host `november` (Debian 13), 
   as a `hostPath` volume (`type: Directory`), created by the `media` Ansible role, and pin themselves to `november` with a
   `kubernetes.io/hostname` nodeSelector. Avoid write-heavy workloads on the SSD.
 - Apps mounting media run as UID/GID 1000. Apps with a config database use the `Recreate` strategy.
-- There are no secrets in git.
+- There are no secrets in git. Secret values come from `~/.config/homelab/secrets.yaml` via the `secrets` Ansible role
+  (`secrets_values.<key>`); add a new key to its `secrets_prompts` and to the playbook's `secrets_required`.
 - Argo sync is manual on purpose: don't add automated sync, prune or selfHeal. Syncs use server-side apply.
 - Ansible: system packages from apt, CLI tools from Homebrew (as the user). Role variables are prefixed with the role name;
   content lives in role `templates/` and `files/`, not inline in tasks.

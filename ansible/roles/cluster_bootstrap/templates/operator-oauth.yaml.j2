@@ -8,6 +8,6 @@ kind: Secret
 metadata:
   name: operator-oauth
   namespace: tailscale
-stringData:
-  client_id: {{ cluster_bootstrap_ts_client_id.user_input | to_json }}
-  client_secret: {{ cluster_bootstrap_ts_client_secret.user_input | to_json }}
+data:
+  client_id: {{ secrets_values.tailscale_client_id | b64encode }}
+  client_secret: {{ secrets_values.tailscale_client_secret | b64encode }}
