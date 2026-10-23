@@ -16,4 +16,4 @@ configMapGenerator:
 
 images:
   - name: gtstef/filebrowser
-    newTag: "2.0.0-stable"
+    newTag: "2.0.2-stable"
