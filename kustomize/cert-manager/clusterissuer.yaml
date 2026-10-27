@@ -1,0 +1,24 @@
+# Let's Encrypt certificates for chijun.website through DNS-01 challenges in Cloudflare, so nothing has to be reachable
+# from the internet. The API token is in the cloudflare-api-token Secret, created by bootstrap.yaml.
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt
+  annotations:
+    # The CRD and the webhook come from the chart in this same app: create this after they're up
+    argocd.argoproj.io/sync-wave: "1"
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      name: letsencrypt-account-key
+    solvers:
+      - dns01:
+          cloudflare:
+            apiTokenSecretRef:
+              name: cloudflare-api-token
+              key: api-token
+        selector:
+          dnsZones:
+            - chijun.website

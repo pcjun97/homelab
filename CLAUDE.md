@@ -22,8 +22,9 @@ GitOps config for a single-node k3s homelab on the host `november` (Debian 13), 
 ## Conventions
 
 - Pin chart versions and image tags; Renovate bumps them.
-- Ingress uses only the Tailscale operator (`ingressClassName: tailscale`), giving `https://<name>.tailbc93b.ts.net`.
-  There is no nginx, cert-manager or public domain. The operator uses its default tags, `tag:k8s-operator` and `tag:k8s`.
+- Ingress uses the Tailscale operator (`ingressClassName: tailscale`), giving `https://<name>.tailbc93b.ts.net`.
+  Custom names (`https://<app>.chijun.website`, still tailnet-only) are being added through Traefik, cert-manager and
+  ExternalDNS; see the Domain decision in the rebuild doc. There is no nginx. The operator uses its default tags, `tag:k8s-operator` and `tag:k8s`.
 - Storage: `local-fast` (default, `/mnt/fast`, SSD) for app config and `local-bulk` (`/mnt/bulk`, HDD) for large data, both from a
   self-run local-path-provisioner with `Retain` and `<namespace>/<pvc>/` folders. Media is not a PVC: apps mount `/mnt/bulk/media`
   as a `hostPath` volume (`type: Directory`), created by the `media` Ansible role, and pin themselves to `november` with a

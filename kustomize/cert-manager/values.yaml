@@ -1,0 +1,7 @@
+crds:
+  enabled: true
+  # Keep the CRDs (and so every Certificate) if the chart is ever removed
+  keep: true
+# Check DNS-01 challenge records against public resolvers rather than the cluster's DNS, which can cache a missing record
+dns01RecursiveNameservers: "1.1.1.1:53,8.8.8.8:53"
+dns01RecursiveNameserversOnly: true
