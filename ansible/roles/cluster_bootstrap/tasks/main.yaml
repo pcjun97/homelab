@@ -1,5 +1,5 @@
 - name: Apply the secrets
-  ansible.builtin.import_tasks: secrets.yaml
+  ansible.builtin.import_tasks: apply_secrets.yaml
 
 - name: Install Argo CD and the ApplicationSet
   ansible.builtin.import_tasks: argocd.yaml
