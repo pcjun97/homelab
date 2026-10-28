@@ -43,6 +43,7 @@ The rest of the host is set up with Ansible (`ansible/`), which installs:
 Third-party apps/services:
 
 - [argo-cd](https://argoproj.github.io/cd/)
+- [cert-manager](https://cert-manager.io/) (Let's Encrypt certificates for `chijun.website` through Cloudflare DNS-01)
 - [filebrowser quantum](https://github.com/gtsteffaniak/filebrowser) (web file manager for media, at `https://files.<tailnet>.ts.net`)
 - [jellyfin](https://jellyfin.org/)
 - [local-path-provisioner](https://github.com/rancher/local-path-provisioner)
@@ -94,8 +95,8 @@ Third-party apps/services:
    cd ansible && ansible-playbook bootstrap.yaml
    ```
    The playbook skips any step that's already done:
-   - prompts for any of the Tailscale OAuth client, B2 key and bucket, and backup ping URL missing from the
-     [secrets file](#secrets), then applies the `operator-oauth` and `backup` secrets from it (on every run)
+   - prompts for any of the Tailscale OAuth client, B2 key and bucket, backup ping URL and Cloudflare token missing from the
+     [secrets file](#secrets), then applies the `operator-oauth`, `backup` and `cloudflare-api-token` secrets from it (on every run)
    - installs Argo CD and the ApplicationSet, which creates one application per directory under `kustomize/`
    - syncs `local-path-provisioner`, `tailscale`, `metrics-server`, `argocd` and `homelab` in order, waiting for each to
      become healthy. Only applications that have never been synced are synced, so re-running it never forces a sync.
@@ -237,6 +238,7 @@ edit the file and re-run the playbook.
 | `tailscale_client_id`, `tailscale_client_secret` | `operator-oauth` Secret (`bootstrap.yaml`) |
 | `b2_key_id`, `b2_application_key`, `b2_bucket`, `healthchecks_backup_url` | `backup` Secret (`bootstrap.yaml`) |
 | `ntfy_topic`, `healthchecks_heartbeat_url` | host alerts and heartbeat (`site.yaml`) |
+| `cloudflare_api_token` | `cloudflare-api-token` Secret for cert-manager (`bootstrap.yaml`); Zone → DNS → Edit on `chijun.website` only |
 
 Keep a copy of the file in a password manager: after a rebuild, paste it back and neither playbook prompts.
 

@@ -11,4 +11,5 @@
         - b2_application_key
         - b2_bucket
         - healthchecks_backup_url
+        - cloudflare_api_token
     - cluster_bootstrap
