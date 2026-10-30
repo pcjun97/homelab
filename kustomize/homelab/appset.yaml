@@ -14,6 +14,10 @@ spec:
   template:
     metadata:
       name: "{{ .path.basename }}"
+      annotations:
+        # Compare with a server-side apply dry run, matching ServerSideApply below. The default client-side diff compares
+        # arrays in custom resources as a whole, so fields defaulted by a CRD (e.g. Gateway API refs) show as OutOfSync.
+        argocd.argoproj.io/compare-options: ServerSideDiff=true
     spec:
       project: default
       source:
