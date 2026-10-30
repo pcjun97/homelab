@@ -45,7 +45,7 @@ Third-party apps/services:
 - [argo-cd](https://argoproj.github.io/cd/)
 - [cert-manager](https://cert-manager.io/) (Let's Encrypt certificates for `chijun.website` through Cloudflare DNS-01)
 - [external-dns](https://kubernetes-sigs.github.io/external-dns/) (Cloudflare records for the `*.chijun.website` names)
-- [filebrowser quantum](https://github.com/gtsteffaniak/filebrowser) (web file manager for media, at `https://files.chijun.website` or `https://files.<tailnet>.ts.net`)
+- [filebrowser quantum](https://github.com/gtsteffaniak/filebrowser) (web file manager for media, at `https://file.chijun.website` or `https://files.<tailnet>.ts.net`)
 - [jellyfin](https://jellyfin.org/)
 - [local-path-provisioner](https://github.com/rancher/local-path-provisioner)
 - [metrics-server](https://github.com/kubernetes-sigs/metrics-server)
@@ -122,8 +122,9 @@ Apps can also be reached at `https://<app>.chijun.website`, still only over Tail
 - cert-manager keeps the wildcard certificate `traefik/wildcard-chijun-website` (Let's Encrypt, Cloudflare DNS-01).
 - ExternalDNS creates a public Cloudflare A record for each HTTPRoute hostname, pointing at the Gateway's tailnet IP (only
   reachable over Tailscale), with a TXT record marking it as owned by `november`. It never touches records it doesn't own.
-- jellyfin, qbittorrent and files have both names; Argo CD stays on `argocd.<tailnet>.ts.net` only, so it's reachable to fix
-  things if Traefik, cert-manager or DNS break.
+- Custom names: `watch.chijun.website` (jellyfin), `qbit.chijun.website` (qbittorrent) and `file.chijun.website` (filebrowser),
+  alongside their ts.net names. Argo CD stays on `argocd.<tailnet>.ts.net` only, so it's reachable to fix things if Traefik,
+  cert-manager or DNS break.
 - An app gets a name by adding an `HTTPRoute` with `parentRefs: [{name: traefik-gateway, namespace: traefik, sectionName: websecure}]`.
 - If the tailnet policy restricts ports, devices need to reach `tag:k8s` on port 80 as well as 443 for the redirect.
 

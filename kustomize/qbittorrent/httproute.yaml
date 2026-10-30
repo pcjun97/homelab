@@ -1,4 +1,4 @@
-# https://qbittorrent.chijun.website through Traefik (tailnet only); the Tailscale Ingress stays as a fallback.
+# https://qbit.chijun.website through Traefik (tailnet only); the Tailscale Ingress stays as a fallback.
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
@@ -9,7 +9,7 @@ spec:
       namespace: traefik
       sectionName: websecure
   hostnames:
-    - qbittorrent.chijun.website
+    - qbit.chijun.website
   rules:
     - backendRefs:
         - name: qbittorrent

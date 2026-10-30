@@ -1,4 +1,4 @@
-# https://files.chijun.website through Traefik (tailnet only); the Tailscale Ingress stays as a fallback.
+# https://file.chijun.website through Traefik (tailnet only); the Tailscale Ingress stays as a fallback.
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
@@ -9,7 +9,7 @@ spec:
       namespace: traefik
       sectionName: websecure
   hostnames:
-    - files.chijun.website
+    - file.chijun.website
   rules:
     - backendRefs:
         - name: filebrowser
