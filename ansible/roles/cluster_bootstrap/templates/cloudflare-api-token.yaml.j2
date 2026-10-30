@@ -10,3 +10,16 @@ metadata:
   namespace: cert-manager
 data:
   api-token: {{ secrets_values.cloudflare_api_token | b64encode }}
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: external-dns
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: cloudflare-api-token
+  namespace: external-dns
+data:
+  api-token: {{ secrets_values.cloudflare_api_token | b64encode }}
