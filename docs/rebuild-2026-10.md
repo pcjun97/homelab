@@ -106,6 +106,13 @@ Notes and decisions from planning the rebuild of `november`, the single homelab 
 - A WAL-mode SQLite database with no `-shm` file (the app is idle) can't be opened even read-only from a read-only
   mount: SQLite has to create the `-shm` file. The snapshot container mounts the config read-write and runs as UID 1000.
 
+### Lessons from Traefik
+
+- Argo's default client-side diff compares arrays in custom resources as a whole, so fields the Gateway API CRDs default
+  (`kind` on refs, TLS `mode`, a `/` path match) left the Gateway and HTTPRoute permanently OutOfSync. The ApplicationSet
+  turns on server-side diff for every app.
+- The first certificate shows the app as Degraded for the ~3 minutes the DNS-01 challenge takes.
+
 ### Lessons from the first downloads
 
 - The official Jellyfin image's default transcode path is `<cache>/transcodes` (`/cache/transcodes`), not under `/config`:

@@ -32,7 +32,7 @@ GitOps config for a single-node k3s homelab on the host `november` (Debian 13), 
 - Apps mounting media run as UID/GID 1000. Apps with a config database use the `Recreate` strategy.
 - There are no secrets in git. Secret values come from `~/.config/homelab/secrets.yaml` via the `secrets` Ansible role
   (`secrets_values.<key>`); add a new key to its `secrets_prompts` and to the playbook's `secrets_required`.
-- Argo sync is manual on purpose: don't add automated sync, prune or selfHeal. Syncs use server-side apply.
+- Argo sync is manual on purpose: don't add automated sync, prune or selfHeal. Syncs use server-side apply, and apps compare with server-side diff.
 - Ansible: system packages from apt, CLI tools from Homebrew (as the user). Role variables are prefixed with the role name;
   content lives in role `templates/` and `files/`, not inline in tasks.
 
