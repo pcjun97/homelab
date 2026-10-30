@@ -59,6 +59,10 @@ Third-party apps/services:
 - GitOps solution of choice is combination of [kustomize](https://kubectl.docs.kubernetes.io/references/kustomize/) and [argo-cd](https://argo-cd.readthedocs.io/en/stable/)
 - No secrets are stored in git. They live in `~/.config/homelab/secrets.yaml` (0600) on the machine running Ansible (see
   [Secrets](#secrets)).
+- [Renovate](https://docs.renovatebot.com/) keeps every pinned version current (`renovate.json`), on Mondays before 06:00
+  (Asia/Kuala_Lumpur). Patch and minor updates merge on their own once CI passes; majors, k3s minor versions and the
+  Traefik/Gateway API group wait for review. Merging changes only git: run the playbooks or sync in Argo CD to apply.
+- CI (`.github/workflows/ci.yaml`) renders every app with kustomize and Helm, and lints the Ansible and the backup scripts.
 
 ## Bootstrap
 
