@@ -85,6 +85,7 @@ Notes and decisions from planning the rebuild of `november`, the single homelab 
 - [x] **All apps running (2026-10-10):** nvidia, media, jellyfin and qbittorrent Synced and Healthy; NVENC available inside Jellyfin
 - [x] Media layout decided (one folder and library per category, Japanese metadata for Japanese content); see the README
 - [x] Host ntfy alerts: smartd, disk space, failed units (#170)
+- [x] cert-manager v1.21.3 with the `letsencrypt` ClusterIssuer (Cloudflare DNS-01), Ready (#180)
 - [x] **Backups (2026-10-13):** nightly `backup` CronJob to B2 with SQLite snapshots (#171, #172); the first run uploaded
       85 GiB in 2 hours. Restore test passed: config hashes match, both database snapshots pass `integrity_check`,
       media sizes match
