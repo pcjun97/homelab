@@ -60,9 +60,21 @@ jobs:
   # The backup job's scripts, which run in busybox sh and Python
   scripts:
     runs-on: ubuntu-24.04
+    env:
+      # The runner's ShellCheck (0.9) predates the busybox dialect (0.10)
+      # renovate: datasource=github-releases depName=koalaman/shellcheck
+      SHELLCHECK_VERSION: v0.11.0
     steps:
       - uses: actions/checkout@v7
+      - name: Install ShellCheck
+        working-directory: ${{ runner.temp }}
+        run: |
+          curl -fsSL "https://github.com/koalaman/shellcheck/releases/download/${SHELLCHECK_VERSION}/shellcheck-${SHELLCHECK_VERSION}.linux.x86_64.tar.gz" \
+            | tar -xz --strip-components=1 "shellcheck-${SHELLCHECK_VERSION}/shellcheck"
+          echo "${RUNNER_TEMP}" >> "${GITHUB_PATH}"
       - name: ShellCheck
-        run: shellcheck --shell=busybox kustomize/backup/backup.sh
+        run: |
+          shellcheck --version
+          shellcheck --shell=busybox kustomize/backup/backup.sh
       - name: Python syntax
         run: python3 -m py_compile kustomize/backup/snapshot.py
