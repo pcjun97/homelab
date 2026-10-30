@@ -88,6 +88,10 @@ Notes and decisions from planning the rebuild of `november`, the single homelab 
 - [x] cert-manager v1.21.3 with the `letsencrypt` ClusterIssuer (Cloudflare DNS-01), Ready (#180)
 - [x] Traefik v3.7.16 with Gateway API v1.6.3: Gateway Programmed at `traefik` (100.106.55.55), wildcard certificate issued (#182);
       server-side diff for every app (#184)
+- [x] **Custom domain (2026-10-31):** ExternalDNS v0.23.0 (#185) publishes A records for the HTTPRoutes `watch` (jellyfin),
+      `qbit` and `file.chijun.website` (#186, #187), all → 100.106.55.55, with TXT owner records. Over HTTPS each app answers with
+      the trusted `*.chijun.website` certificate (valid until 2027-01-28), and HTTP redirects. The old cluster's stale
+      `argocd`, `grafana` and `longhorn` records were deleted by hand
 - [x] **Backups (2026-10-13):** nightly `backup` CronJob to B2 with SQLite snapshots (#171, #172); the first run uploaded
       85 GiB in 2 hours. Restore test passed: config hashes match, both database snapshots pass `integrity_check`,
       media sizes match
@@ -115,6 +119,14 @@ Notes and decisions from planning the rebuild of `november`, the single homelab 
   turns on server-side diff for every app.
 - The first certificate shows the app as Degraded for the ~3 minutes the DNS-01 challenge takes.
 
+### Lessons from the custom domain
+
+- `.gitignore`'s `secrets.yaml` rule silently kept the bootstrap's secret task out of git (#179). Check `git status --ignored`
+  when adding files with names like `secret*`.
+- ExternalDNS needs its own copy of the Cloudflare token Secret (Secrets are namespaced), so run `bootstrap.yaml` before
+  syncing it; until then the pod sits in `CreateContainerConfigError`.
+- Renaming an HTTPRoute hostname is safe: ExternalDNS (`policy: sync`) creates the new record and deletes the old one it owns.
+
 ### Lessons from the first downloads
 
 - The official Jellyfin image's default transcode path is `<cache>/transcodes` (`/cache/transcodes`), not under `/config`:
@@ -136,10 +148,6 @@ Notes and decisions from planning the rebuild of `november`, the single homelab 
       integration, then run `site.yaml` and `bootstrap.yaml` (they prompt once for every value, filling the secrets file)
       and send a test alert (`sudo homelab-notify "Test" "Hello"`)
 - [ ] Save a copy of `~/.config/homelab/secrets.yaml` in the password manager
-- [ ] Delete the old cluster's stale Cloudflare records `argocd`, `grafana` and `longhorn.chijun.website` (100.126.61.29);
-      ExternalDNS doesn't own them
-- [ ] Custom domain: ExternalDNS (#185) and HTTPRoutes for `watch` (jellyfin), `qbit` and `file.chijun.website`; then check the
-      records in Cloudflare and each app over HTTPS
 - [ ] Optional: keep the Tailscale policy file in the repo and sync it with Tailscale's GitHub Action
 - [ ] Later: automate downloads with Sonarr (TV, Japanese TV, anime), Radarr (movies, Japanese movies) and Prowlarr. Prowlarr
       supports the sources in use: Nyaa (built in; Sonarr's Anime series type handles absolute numbering), AvistaZ (built in,
