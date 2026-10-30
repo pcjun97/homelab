@@ -138,9 +138,8 @@ Notes and decisions from planning the rebuild of `november`, the single homelab 
 - [ ] Save a copy of `~/.config/homelab/secrets.yaml` in the password manager
 - [ ] Delete the old cluster's stale Cloudflare records `argocd`, `grafana` and `longhorn.chijun.website` (100.126.61.29);
       ExternalDNS doesn't own them
-- [ ] Custom domain (one PR each): cert-manager with the Cloudflare token from the secrets file; Traefik with the Gateway API
-      CRDs, a Tailscale LoadBalancer and the wildcard certificate; ExternalDNS; HTTPRoutes for jellyfin, qbittorrent and files.
-      Create a Cloudflare API token with Zone → DNS → Edit on `chijun.website` only
+- [ ] Custom domain: ExternalDNS (#185) and HTTPRoutes for `jellyfin`, `qbittorrent` and `files.chijun.website`; then check the
+      records in Cloudflare and each app over HTTPS
 - [ ] Optional: keep the Tailscale policy file in the repo and sync it with Tailscale's GitHub Action
 - [ ] Later: automate downloads with Sonarr (TV, Japanese TV, anime), Radarr (movies, Japanese movies) and Prowlarr. Prowlarr
       supports the sources in use: Nyaa (built in; Sonarr's Anime series type handles absolute numbering), AvistaZ (built in,
