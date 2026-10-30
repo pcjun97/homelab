@@ -86,6 +86,8 @@ Notes and decisions from planning the rebuild of `november`, the single homelab 
 - [x] Media layout decided (one folder and library per category, Japanese metadata for Japanese content); see the README
 - [x] Host ntfy alerts: smartd, disk space, failed units (#170)
 - [x] cert-manager v1.21.3 with the `letsencrypt` ClusterIssuer (Cloudflare DNS-01), Ready (#180)
+- [x] Traefik v3.7.16 with Gateway API v1.6.3: Gateway Programmed at `traefik` (100.106.55.55), wildcard certificate issued (#182);
+      server-side diff for every app (#184)
 - [x] **Backups (2026-10-13):** nightly `backup` CronJob to B2 with SQLite snapshots (#171, #172); the first run uploaded
       85 GiB in 2 hours. Restore test passed: config hashes match, both database snapshots pass `integrity_check`,
       media sizes match
@@ -134,6 +136,8 @@ Notes and decisions from planning the rebuild of `november`, the single homelab 
       integration, then run `site.yaml` and `bootstrap.yaml` (they prompt once for every value, filling the secrets file)
       and send a test alert (`sudo homelab-notify "Test" "Hello"`)
 - [ ] Save a copy of `~/.config/homelab/secrets.yaml` in the password manager
+- [ ] Delete the old cluster's stale Cloudflare records `argocd`, `grafana` and `longhorn.chijun.website` (100.126.61.29);
+      ExternalDNS doesn't own them
 - [ ] Custom domain (one PR each): cert-manager with the Cloudflare token from the secrets file; Traefik with the Gateway API
       CRDs, a Tailscale LoadBalancer and the wildcard certificate; ExternalDNS; HTTPRoutes for jellyfin, qbittorrent and files.
       Create a Cloudflare API token with Zone → DNS → Edit on `chijun.website` only

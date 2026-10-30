@@ -1,0 +1,29 @@
+# Public Cloudflare records for every HTTPRoute hostname under chijun.website, pointing at the Gateway's tailnet IP.
+# The API token is in the cloudflare-api-token Secret, created by bootstrap.yaml.
+provider:
+  name: cloudflare
+env:
+  - name: CF_API_TOKEN
+    valueFrom:
+      secretKeyRef:
+        name: cloudflare-api-token
+        key: api-token
+
+sources:
+  - gateway-httproute
+domainFilters:
+  - chijun.website
+# Only A/AAAA: the Gateway also lists traefik.<tailnet>.ts.net as an address, and a CNAME to it can't sit next to the
+# A record (and only resolves inside the tailnet anyway)
+managedRecordTypes:
+  - A
+  - AAAA
+
+# Create and delete records as routes come and go; the TXT registry keeps it to records this instance created
+policy: sync
+registry: txt
+txtOwnerId: november
+
+# React to route changes right away, and otherwise check every 5 minutes to keep Cloudflare API calls low
+triggerLoopOnEvent: true
+interval: 5m

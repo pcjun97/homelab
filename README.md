@@ -44,6 +44,7 @@ Third-party apps/services:
 
 - [argo-cd](https://argoproj.github.io/cd/)
 - [cert-manager](https://cert-manager.io/) (Let's Encrypt certificates for `chijun.website` through Cloudflare DNS-01)
+- [external-dns](https://kubernetes-sigs.github.io/external-dns/) (Cloudflare records for the `*.chijun.website` names)
 - [filebrowser quantum](https://github.com/gtsteffaniak/filebrowser) (web file manager for media, at `https://files.<tailnet>.ts.net`)
 - [jellyfin](https://jellyfin.org/)
 - [local-path-provisioner](https://github.com/rancher/local-path-provisioner)
@@ -119,6 +120,8 @@ Apps can also be reached at `https://<app>.chijun.website`, still only over Tail
 - Traefik serves the Gateway API `Gateway` `traefik/traefik-gateway`, exposed as a single tailnet device, `traefik`, through a
   Tailscale `LoadBalancer` Service. Its HTTPS listener takes `*.chijun.website`, and plain HTTP redirects to HTTPS.
 - cert-manager keeps the wildcard certificate `traefik/wildcard-chijun-website` (Let's Encrypt, Cloudflare DNS-01).
+- ExternalDNS creates a public Cloudflare A record for each HTTPRoute hostname, pointing at the Gateway's tailnet IP (only
+  reachable over Tailscale), with a TXT record marking it as owned by `november`. It never touches records it doesn't own.
 - An app gets a name by adding an `HTTPRoute` with `parentRefs: [{name: traefik-gateway, namespace: traefik, sectionName: websecure}]`.
 - If the tailnet policy restricts ports, devices need to reach `tag:k8s` on port 80 as well as 443 for the redirect.
 
@@ -247,7 +250,7 @@ edit the file and re-run the playbook.
 | `tailscale_client_id`, `tailscale_client_secret` | `operator-oauth` Secret (`bootstrap.yaml`) |
 | `b2_key_id`, `b2_application_key`, `b2_bucket`, `healthchecks_backup_url` | `backup` Secret (`bootstrap.yaml`) |
 | `ntfy_topic`, `healthchecks_heartbeat_url` | host alerts and heartbeat (`site.yaml`) |
-| `cloudflare_api_token` | `cloudflare-api-token` Secret for cert-manager (`bootstrap.yaml`); Zone → DNS → Edit on `chijun.website` only |
+| `cloudflare_api_token` | `cloudflare-api-token` Secrets for cert-manager and external-dns (`bootstrap.yaml`); Zone → DNS → Edit on `chijun.website` only |
 
 Keep a copy of the file in a password manager: after a rebuild, paste it back and neither playbook prompts.
 
