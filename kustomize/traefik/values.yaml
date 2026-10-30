@@ -1,0 +1,38 @@
+# Only the Gateway API provider: apps use HTTPRoutes. Ingresses stay with the Tailscale operator.
+providers:
+  kubernetesGateway:
+    enabled: true
+  kubernetesCRD:
+    enabled: false
+  kubernetesIngress:
+    enabled: false
+
+# No IngressClass: Ingresses stay with the Tailscale operator
+ingressClass:
+  enabled: false
+
+gateway:
+  listeners:
+    web:
+      port: 8000
+      protocol: HTTP
+      # Only the HTTPS redirect in this namespace attaches here
+      namespacePolicy:
+        from: Same
+    websecure:
+      port: 8443
+      protocol: HTTPS
+      hostname: "*.chijun.website"
+      certificateRefs:
+        - name: wildcard-chijun-website
+      # Apps attach their HTTPRoutes from their own namespaces
+      namespacePolicy:
+        from: All
+
+# One tailnet device, traefik.<tailnet>.ts.net, for every custom name. ExternalDNS points the records at its IP.
+service:
+  annotations:
+    tailscale.com/hostname: traefik
+  spec:
+    type: LoadBalancer
+    loadBalancerClass: tailscale

@@ -51,6 +51,7 @@ Third-party apps/services:
 - [nvidia-device-plugin](https://github.com/NVIDIA/k8s-device-plugin)
 - [qbittorrent](https://www.qbittorrent.org/)
 - [tailscaled](https://tailscale.com/kb/1185/kubernetes/)
+- [traefik](https://traefik.io/traefik/) (Gateway API proxy for the `*.chijun.website` names, on the tailnet as `traefik`)
 
 ## Tools
 
@@ -112,6 +113,14 @@ All endpoints are private and only reachable over Tailscale.
 Each `Ingress` uses the `tailscale` ingress class from the Tailscale operator,
 which gives the service its own tailnet device at `https://<name>.<tailnet>.ts.net` with a certificate issued by Tailscale.
 MagicDNS and HTTPS must be enabled for the tailnet.
+
+Apps can also be reached at `https://<app>.chijun.website`, still only over Tailscale:
+
+- Traefik serves the Gateway API `Gateway` `traefik/traefik-gateway`, exposed as a single tailnet device, `traefik`, through a
+  Tailscale `LoadBalancer` Service. Its HTTPS listener takes `*.chijun.website`, and plain HTTP redirects to HTTPS.
+- cert-manager keeps the wildcard certificate `traefik/wildcard-chijun-website` (Let's Encrypt, Cloudflare DNS-01).
+- An app gets a name by adding an `HTTPRoute` with `parentRefs: [{name: traefik-gateway, namespace: traefik, sectionName: websecure}]`.
+- If the tailnet policy restricts ports, devices need to reach `tag:k8s` on port 80 as well as 443 for the redirect.
 
 ### Storage
 

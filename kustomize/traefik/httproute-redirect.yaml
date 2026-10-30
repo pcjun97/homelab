@@ -1,0 +1,15 @@
+# Redirect plain HTTP on any name to HTTPS.
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: https-redirect
+spec:
+  parentRefs:
+    - name: traefik-gateway
+      sectionName: web
+  rules:
+    - filters:
+        - type: RequestRedirect
+          requestRedirect:
+            scheme: https
+            statusCode: 301
