@@ -141,7 +141,7 @@ Notes and decisions from planning the rebuild of `november`, the single homelab 
 - [ ] FileBrowser Quantum `2.0.0-stable` at `files.tailbc93b.ts.net`, mounting `/mnt/bulk/media` as a `hostPath`, pinned to `november`,
       data on `local-fast`. After the first start, log in as `admin` with the generated password from
       `kubectl logs deploy/filebrowser | grep -i password` and change it (v2 no longer defaults to `admin`/`admin`)
-- [ ] CI workflow (render all apps, ansible-lint) as a required check
+- [ ] CI workflow (render all apps, ansible-lint, backup scripts) as a required check; then require it on `main`
 - [ ] Renovate config (automerge patch/minor, majors via Dependency Dashboard approval, weekly schedule,
       custom rule for the k3s version in Ansible, versioning rule for linuxserver tags); clean up the stale `renovate/*` branches
 - [ ] healthchecks.io: create the `backup` (1 day / 8 hours) and `heartbeat` (5 / 15 minutes) checks with the ntfy
