@@ -38,5 +38,7 @@ GitOps config for a single-node k3s homelab on the host `november` (Debian 13), 
 
 ## Checks before opening a PR
 
+CI (`.github/workflows/ci.yaml`) runs these on every PR; run them locally first:
+
 - `kustomize build --enable-helm kustomize/<app>` for every changed app
 - `ansible-playbook --syntax-check` and `ansible-lint` for Ansible changes

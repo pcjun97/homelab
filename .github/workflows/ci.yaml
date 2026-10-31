@@ -1,0 +1,80 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  # Render every Argo CD app the way Argo does (kustomize with Helm charts)
+  kustomize:
+    runs-on: ubuntu-24.04
+    env:
+      # renovate: datasource=github-releases depName=kubernetes-sigs/kustomize extractVersion=^kustomize/(?<version>.+)$
+      KUSTOMIZE_VERSION: v5.8.3
+      # renovate: datasource=github-releases depName=helm/helm
+      HELM_VERSION: v4.3.1
+    steps:
+      - uses: actions/checkout@v7
+      - uses: azure/setup-helm@v5
+        with:
+          version: ${{ env.HELM_VERSION }}
+      - name: Install kustomize
+        working-directory: ${{ runner.temp }}
+        run: |
+          base=https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/${KUSTOMIZE_VERSION}
+          curl -fsSLO "${base}/kustomize_${KUSTOMIZE_VERSION}_linux_amd64.tar.gz"
+          curl -fsSLO "${base}/checksums.txt"
+          sha256sum --check --ignore-missing checksums.txt
+          tar -xzf "kustomize_${KUSTOMIZE_VERSION}_linux_amd64.tar.gz" kustomize
+          echo "${RUNNER_TEMP}" >> "${GITHUB_PATH}"
+      - name: Build every app
+        run: |
+          for app in kustomize/*/; do
+            echo "::group::${app}"
+            kustomize build --enable-helm "${app}" > /dev/null
+            echo "::endgroup::"
+          done
+
+  ansible:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+      - name: Install Ansible
+        run: |
+          pip install -r .github/ci-requirements.txt
+          ansible-galaxy collection install -r ansible/requirements.yaml
+      - name: Syntax check
+        working-directory: ansible
+        run: ansible-playbook --syntax-check site.yaml bootstrap.yaml
+      - name: Lint
+        working-directory: ansible
+        run: ansible-lint
+
+  # The backup job's scripts, which run in busybox sh and Python
+  scripts:
+    runs-on: ubuntu-24.04
+    env:
+      # The runner's ShellCheck (0.9) predates the busybox dialect (0.10)
+      # renovate: datasource=github-releases depName=koalaman/shellcheck
+      SHELLCHECK_VERSION: v0.11.0
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install ShellCheck
+        working-directory: ${{ runner.temp }}
+        run: |
+          curl -fsSL "https://github.com/koalaman/shellcheck/releases/download/${SHELLCHECK_VERSION}/shellcheck-${SHELLCHECK_VERSION}.linux.x86_64.tar.gz" \
+            | tar -xz --strip-components=1 "shellcheck-${SHELLCHECK_VERSION}/shellcheck"
+          echo "${RUNNER_TEMP}" >> "${GITHUB_PATH}"
+      - name: ShellCheck
+        run: |
+          shellcheck --version
+          shellcheck --shell=busybox kustomize/backup/backup.sh
+      - name: Python syntax
+        run: python3 -m py_compile kustomize/backup/snapshot.py
