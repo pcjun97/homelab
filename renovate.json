@@ -1,4 +1,69 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:recommended"]
+  "extends": ["config:recommended"],
+  "timezone": "Asia/Kuala_Lumpur",
+  "schedule": ["* 0-5 * * 1"],
+  "prHourlyLimit": 0,
+  "packageRules": [
+    {
+      "description": "Merge patch and minor updates once CI passes. Argo sync is manual, so nothing reaches the cluster until synced",
+      "matchUpdateTypes": ["minor", "patch"],
+      "automerge": true
+    },
+    {
+      "description": "Major updates wait for approval on the Dependency Dashboard",
+      "matchUpdateTypes": ["major"],
+      "dependencyDashboardApproval": true
+    },
+    {
+      "description": "Traefik and the Gateway API CRDs in one PR, reviewed by hand: a Traefik release can require newer CRDs",
+      "matchPackageNames": ["traefik", "kubernetes-sigs/gateway-api"],
+      "groupName": "traefik and Gateway API",
+      "automerge": false
+    },
+    {
+      "description": "A k3s minor version is a Kubernetes upgrade: wait for approval",
+      "matchPackageNames": ["k3s-io/k3s"],
+      "matchUpdateTypes": ["minor"],
+      "dependencyDashboardApproval": true,
+      "automerge": false
+    },
+    {
+      "description": "linuxserver's old 20.x tags sort above the real qbittorrent releases",
+      "matchPackageNames": ["linuxserver/qbittorrent"],
+      "allowedVersions": "<20"
+    },
+    {
+      "description": "CI's ansible-core stays on the Debian version the host runs",
+      "matchPackageNames": ["ansible-core"],
+      "allowedVersions": "<2.20"
+    }
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Tool versions in workflows marked with a # renovate: comment",
+      "managerFilePatterns": ["/^\\.github/workflows/.+\\.ya?ml$/"],
+      "matchStrings": [
+        "# renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)( extractVersion=(?<extractVersion>\\S+))?\\s+\\w+: (?<currentValue>\\S+)"
+      ]
+    },
+    {
+      "customType": "regex",
+      "description": "k3s version installed by Ansible",
+      "managerFilePatterns": ["/^ansible/roles/k3s/defaults/main\\.yaml$/"],
+      "matchStrings": ["k3s_version: (?<currentValue>\\S+)"],
+      "datasourceTemplate": "github-releases",
+      "depNameTemplate": "k3s-io/k3s",
+      "versioningTemplate": "regex:^v(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)\\+k3s(?<build>\\d+)$"
+    },
+    {
+      "customType": "regex",
+      "description": "Gateway API CRDs installed from the upstream release",
+      "managerFilePatterns": ["/^kustomize/traefik/kustomization\\.yaml$/"],
+      "matchStrings": ["gateway-api/releases/download/(?<currentValue>v[\\d.]+)/"],
+      "datasourceTemplate": "github-releases",
+      "depNameTemplate": "kubernetes-sigs/gateway-api"
+    }
+  ]
 }

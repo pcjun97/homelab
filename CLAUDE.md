@@ -21,7 +21,9 @@ GitOps config for a single-node k3s homelab on the host `november` (Debian 13), 
 
 ## Conventions
 
-- Pin chart versions and image tags; Renovate bumps them.
+- Pin chart versions, image tags and tool versions; Renovate bumps them (`renovate.json`): patch/minor auto-merge after CI,
+  majors wait for Dependency Dashboard approval. A version Renovate can't detect needs a `customManagers` entry or a
+  `# renovate:` comment.
 - Ingress uses the Tailscale operator (`ingressClassName: tailscale`), giving `https://<name>.tailbc93b.ts.net`.
   Custom names (`https://<app>.chijun.website`, still tailnet-only) go through Traefik's Gateway API `traefik/traefik-gateway`
   with an `HTTPRoute` per app; ExternalDNS publishes the records. See the Domain decision in the rebuild doc. There is no nginx. The operator uses its default tags, `tag:k8s-operator` and `tag:k8s`.

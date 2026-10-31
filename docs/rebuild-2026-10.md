@@ -142,8 +142,9 @@ Notes and decisions from planning the rebuild of `november`, the single homelab 
       data on `local-fast`. After the first start, log in as `admin` with the generated password from
       `kubectl logs deploy/filebrowser | grep -i password` and change it (v2 no longer defaults to `admin`/`admin`)
 - [ ] CI workflow (render all apps, ansible-lint, backup scripts) as a required check; then require it on `main`
-- [ ] Renovate config (automerge patch/minor, majors via Dependency Dashboard approval, weekly schedule,
-      custom rule for the k3s version in Ansible, versioning rule for linuxserver tags); clean up the stale `renovate/*` branches
+- [ ] Renovate config: patch/minor auto-merge after CI, majors and k3s minors via Dependency Dashboard approval, Mondays before
+      06:00 KL time; Traefik and the Gateway API CRDs grouped and reviewed by hand; qbittorrent's legacy 20.x tags blocked; k3s,
+      Gateway API and CI tool versions tracked. Then turn on Allow auto-merge and close the stale PRs and branches
 - [ ] healthchecks.io: create the `backup` (1 day / 8 hours) and `heartbeat` (5 / 15 minutes) checks with the ntfy
       integration, then run `site.yaml` and `bootstrap.yaml` (they prompt once for every value, filling the secrets file)
       and send a test alert (`sudo homelab-notify "Test" "Hello"`)
