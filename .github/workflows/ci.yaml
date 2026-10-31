@@ -11,7 +11,7 @@ permissions:
 jobs:
   # Render every Argo CD app the way Argo does (kustomize with Helm charts)
   kustomize:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     env:
       # renovate: datasource=github-releases depName=kubernetes-sigs/kustomize extractVersion=^kustomize/(?<version>.+)$
       KUSTOMIZE_VERSION: v5.8.3
@@ -40,7 +40,7 @@ jobs:
           done
 
   ansible:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v7
@@ -59,7 +59,7 @@ jobs:
 
   # The backup job's scripts, which run in busybox sh and Python
   scripts:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     env:
       # The runner's ShellCheck (0.9) predates the busybox dialect (0.10)
       # renovate: datasource=github-releases depName=koalaman/shellcheck
