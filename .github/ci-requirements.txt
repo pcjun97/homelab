@@ -1,3 +1,3 @@
 # Ansible for CI. ansible-core matches the Debian package on the host (2.19), so CI checks what the host runs.
-ansible-core==2.19.11
+ansible-core==2.19.14
 ansible-lint==26.10.1
