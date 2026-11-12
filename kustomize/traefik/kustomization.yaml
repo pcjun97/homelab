@@ -6,14 +6,14 @@ namespace: traefik
 helmCharts:
   - name: traefik
     repo: https://traefik.github.io/charts
-    version: 42.1.3
+    version: 42.4.0
     releaseName: traefik
     namespace: traefik
     valuesFile: values.yaml
 
 resources:
   # Gateway API CRDs (standard channel); the version Traefik v3.7 requires
-  - https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.6.3/standard-install.yaml
+  - https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.7.0/standard-install.yaml
   - namespace.yaml
   - certificate.yaml
   - httproute-redirect.yaml
