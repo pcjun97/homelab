@@ -12,4 +12,4 @@ resources:
 
 images:
   - name: "jellyfin/jellyfin"
-    newTag: "12.2"
+    newTag: "12.4"
